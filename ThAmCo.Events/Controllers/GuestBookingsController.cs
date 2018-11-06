@@ -158,10 +158,9 @@ namespace ThAmCo.Events.Controllers
         // POST: GuestBookings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int custId, int eventId)
+        public async Task<IActionResult> DeleteConfirmed(int CustomerId, int EventId)
         {
-            Console.WriteLine(custId + "    " + eventId);
-            var guestBooking = await _context.Guests.FindAsync(custId, eventId);
+            GuestBooking guestBooking = await _context.Guests.FindAsync(CustomerId, EventId);
             _context.Guests.Remove(guestBooking);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
