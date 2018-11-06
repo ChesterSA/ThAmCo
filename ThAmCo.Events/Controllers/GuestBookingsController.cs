@@ -19,17 +19,16 @@ namespace ThAmCo.Events.Controllers
         }
 
         // GET: GuestBookings
-        public async Task<IActionResult> Index()
-        {
-            var eventsDbContext = _context.Guests.Include(g => g.Customer).Include(g => g.Event);
-            return View(await eventsDbContext.ToListAsync());
-        }
-
         public async Task<IActionResult> Index(int? id)
         {
-            var eventsDbContext = _context.Guests.Include(g => g.Customer);
-            var eventsDbContext2 = eventsDbContext.Include(g => g.EventId == id);
-            return View(await eventsDbContext2.ToListAsync());
+            IQueryable < GuestBooking> eventsDbContext = _context.Guests.Include(g => g.Customer).Include(g => g.Event);  
+
+            if (id != null)
+            {
+                eventsDbContext = eventsDbContext.Where(g => g.EventId == id);
+            }    
+            
+            return View(await eventsDbContext.ToListAsync());
         }
 
         // GET: GuestBookings/Details/5
