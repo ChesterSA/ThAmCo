@@ -21,20 +21,20 @@ namespace ThAmCo.Events.Controllers
         // GET: GuestBookings
         public async Task<IActionResult> Index(int? id)
         {
-            IQueryable < GuestBooking> eventsDbContext = _context.Guests.Include(g => g.Customer).Include(g => g.Event);  
+            IQueryable<GuestBooking> eventsDbContext = _context.Guests.Include(g => g.Customer).Include(g => g.Event);
 
             if (id != null)
             {
                 eventsDbContext = eventsDbContext.Where(g => g.EventId == id);
-            }    
-            
+            }
+
             return View(await eventsDbContext.ToListAsync());
         }
 
         // GET: GuestBookings/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? custId, int? eventId)
         {
-            if (id == null)
+            if (custId == null || eventId == null)
             {
                 return NotFound();
             }
@@ -42,7 +42,8 @@ namespace ThAmCo.Events.Controllers
             var guestBooking = await _context.Guests
                 .Include(g => g.Customer)
                 .Include(g => g.Event)
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
+                .Where(m => m.CustomerId == custId)
+                .FirstOrDefaultAsync(m => m.EventId == eventId);
             if (guestBooking == null)
             {
                 return NotFound();
@@ -52,9 +53,9 @@ namespace ThAmCo.Events.Controllers
         }
 
         // GET: GuestBookings/Create
-        public IActionResult Create(int? id)
+        public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", id);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email");
             ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title");
             return View();
         }
@@ -133,9 +134,9 @@ namespace ThAmCo.Events.Controllers
         }
 
         // GET: GuestBookings/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? custId, int? eventId)
         {
-            if (id == null)
+            if (custId == null || eventId == null)
             {
                 return NotFound();
             }
@@ -143,7 +144,9 @@ namespace ThAmCo.Events.Controllers
             var guestBooking = await _context.Guests
                 .Include(g => g.Customer)
                 .Include(g => g.Event)
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
+                .Where(m => m.CustomerId == custId)
+                .FirstOrDefaultAsync(m => m.EventId == eventId);
+
             if (guestBooking == null)
             {
                 return NotFound();
@@ -155,9 +158,10 @@ namespace ThAmCo.Events.Controllers
         // POST: GuestBookings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int custId, int eventId)
         {
-            var guestBooking = await _context.Guests.FindAsync(id);
+            Console.WriteLine(custId + "    " + eventId);
+            var guestBooking = await _context.Guests.FindAsync(custId, eventId);
             _context.Guests.Remove(guestBooking);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
