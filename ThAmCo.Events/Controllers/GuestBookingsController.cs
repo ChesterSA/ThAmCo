@@ -160,6 +160,8 @@ namespace ThAmCo.Events.Controllers
             return View(guestBooking);
         }
 
+        
+
         // POST: GuestBookings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
