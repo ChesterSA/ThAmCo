@@ -19,13 +19,18 @@ namespace ThAmCo.Events.Controllers
         }
 
         // GET: GuestBookings
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index(int? CustomerId, int? EventId)
         {
             IQueryable<GuestBooking> eventsDbContext = _context.Guests.Include(g => g.Customer).Include(g => g.Event);
 
-            if (id != null)
+            if (CustomerId != null)
             {
-                eventsDbContext = eventsDbContext.Where(g => g.EventId == id);
+                eventsDbContext = eventsDbContext.Where(g => g.CustomerId == CustomerId);
+            }
+
+            if (EventId != null)
+            {
+                eventsDbContext = eventsDbContext.Where(g => g.EventId == EventId);
             }
 
             return View(await eventsDbContext.ToListAsync());
@@ -79,14 +84,14 @@ namespace ThAmCo.Events.Controllers
         }
 
         // GET: GuestBookings/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? CustomerId, int? EventId)
         {
-            if (id == null)
+            if (EventId == null || CustomerId == null)
             {
                 return NotFound();
             }
 
-            var guestBooking = await _context.Guests.FindAsync(id);
+            var guestBooking = await _context.Guests.FindAsync(CustomerId, EventId);
             if (guestBooking == null)
             {
                 return NotFound();
@@ -101,9 +106,9 @@ namespace ThAmCo.Events.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,EventId,Attended")] GuestBooking guestBooking)
+        public async Task<IActionResult> Edit(int CustomerId, int EventId, [Bind("CustomerId,EventId,Attended")] GuestBooking guestBooking)
         {
-            if (id != guestBooking.CustomerId)
+            if (CustomerId != guestBooking.CustomerId || EventId != guestBooking.EventId)
             {
                 return NotFound();
             }
@@ -128,8 +133,8 @@ namespace ThAmCo.Events.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", guestBooking.CustomerId);
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", guestBooking.EventId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Email", guestBooking.CustomerId);
+            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "Title", guestBooking.EventId);
             return View(guestBooking);
         }
 
@@ -158,10 +163,9 @@ namespace ThAmCo.Events.Controllers
         // POST: GuestBookings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int custId, int eventId)
+        public async Task<IActionResult> DeleteConfirmed(int CustomerId, int EventId)
         {
-            Console.WriteLine(custId + "    " + eventId);
-            var guestBooking = await _context.Guests.FindAsync(custId, eventId);
+            GuestBooking guestBooking = await _context.Guests.FindAsync(CustomerId, EventId);
             _context.Guests.Remove(guestBooking);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
