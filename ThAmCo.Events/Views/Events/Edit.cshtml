@@ -1,4 +1,4 @@
-﻿@model ThAmCo.Events.Data.Event
+﻿@model ThAmCo.Events.Data.EventEdit
 
 @{
     ViewData["Title"] = "Edit";
@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" readonly="readonly" class="form-control" />
+                <input asp-for="Date" class="form-control" readonly="readonly"/>
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="TypeId" class="control-label"></label>
-                <input asp-for="TypeId" readonly="readonly" class="form-control" />
+                <input asp-for="TypeId"  class="form-control" readonly="readonly"/>
                 <span asp-validation-for="TypeId" class="text-danger"></span>
             </div>
             <div class="form-group">

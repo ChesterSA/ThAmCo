@@ -74,12 +74,22 @@ namespace ThAmCo.Events.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events.FindAsync(id);
+            Event @event = await _context.Events.FindAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
-            return View(@event);
+            
+            EventEdit eventEdit = new EventEdit
+            {
+                Id = @event.Id,
+                Title = @event.Title,
+                Date = @event.Date,
+                Duration = @event.Duration,
+                TypeId = @event.TypeId
+            };
+            
+            return View(@eventEdit);
         }
 
         // POST: Events/Edit/5
@@ -87,15 +97,20 @@ namespace ThAmCo.Events.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Date,Duration,TypeId")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Duration")] EventEdit eventEdit)
         {
-            if (id != @event.Id)
+            if (id != @eventEdit.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                Event @event = _context.Events.Find(id);
+
+                @event.Title = eventEdit.Title;
+                @event.Duration = eventEdit.Duration;
+
                 try
                 {
                     _context.Update(@event);
@@ -114,7 +129,7 @@ namespace ThAmCo.Events.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@event);
+            return View(eventEdit);
         }
 
         // GET: Events/Delete/5
