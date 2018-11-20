@@ -18,50 +18,33 @@ namespace ThAmCo.Events.Controllers
             _context = context;
         }
 
-        // GET: GuestBookings
-        public async Task<IActionResult> Index(int? CustomerId, int? EventId)
-        {
-            IQueryable<GuestBooking> eventsDbContext = _context.Guests.Include(g => g.Customer).Include(g => g.Event);
-
-            if (CustomerId != null)
-            {
-                eventsDbContext = eventsDbContext.Where(g => g.CustomerId == CustomerId);
-            }
-
-            if (EventId != null)
-            {
-                eventsDbContext = eventsDbContext.Where(g => g.EventId == EventId);
-            }
-
-            return View(await eventsDbContext.ToListAsync());
-        }
-
-        // GET: GuestBookings/Details/5
-        public async Task<IActionResult> Details(int? custId, int? eventId)
-        {
-            if (custId == null || eventId == null)
-            {
-                return NotFound();
-            }
-
-            var guestBooking = await _context.Guests
-                .Include(g => g.Customer)
-                .Include(g => g.Event)
-                .Where(m => m.CustomerId == custId)
-                .FirstOrDefaultAsync(m => m.EventId == eventId);
-            if (guestBooking == null)
-            {
-                return NotFound();
-            }
-
-            return View(guestBooking);
-        }
 
         // GET: GuestBookings/Create
-        public IActionResult Create()
+        public IActionResult Create([FromQuery] int? eventId)
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email");
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title");
+            if (eventId == null)
+            {
+                return BadRequest();
+            }
+
+            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", eventId);
+
+            var customers = _context.Customers.ToList();
+            var currentGuests = _context.Guests
+                                        .Where(g => g.EventId == eventId)
+                                        .ToList();
+            customers.RemoveAll(c => currentGuests.Any(g => g.CustomerId == c.Id));
+
+            ViewData["CustomerId"] = new SelectList(customers, "Id", "Email");
+
+            var @event = _context.Events.Find(eventId);
+            if (@event == null)
+            {
+                return BadRequest();
+            }
+
+            ViewData["EventTitle"] = @event.Title;
+
             return View();
         }
 
@@ -74,108 +57,96 @@ namespace ThAmCo.Events.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(guestBooking);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", guestBooking.CustomerId);
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", guestBooking.EventId);
-            return View(guestBooking);
-        }
-
-        // GET: GuestBookings/Edit/5
-        public async Task<IActionResult> Edit(int? CustomerId, int? EventId)
-        {
-            if (EventId == null || CustomerId == null)
-            {
-                return NotFound();
-            }
-
-            var guestBooking = await _context.Guests.FindAsync(CustomerId, EventId);
-            if (guestBooking == null)
-            {
-                return NotFound();
-            }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", guestBooking.CustomerId);
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", guestBooking.EventId);
-            return View(guestBooking);
-        }
-
-        // POST: GuestBookings/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int CustomerId, int EventId, [Bind("CustomerId,EventId,Attended")] GuestBooking guestBooking)
-        {
-            if (CustomerId != guestBooking.CustomerId || EventId != guestBooking.EventId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                //Check if guest booking already exists
+                if (_context.Guests.Any(g => g.CustomerId == guestBooking.CustomerId && g.EventId == guestBooking.EventId))
                 {
-                    _context.Update(guestBooking);
+                    ModelState.AddModelError(string.Empty, "Booking already exists");
+                }
+                else
+                {
+                    _context.Add(guestBooking);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Events");
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GuestBookingExists(guestBooking.CustomerId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Email", guestBooking.CustomerId);
-            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "Title", guestBooking.EventId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", guestBooking.CustomerId);
+            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", guestBooking.EventId);
+
+            var @event = await _context.Events.FindAsync(guestBooking.EventId);
+            if (@event == null)
+            {
+                return BadRequest();
+            }
+
+            ViewData["EventTitle"] = @event.Title;
+
             return View(guestBooking);
         }
 
         // GET: GuestBookings/Delete/5
-        public async Task<IActionResult> Delete(int? custId, int? eventId)
+        public IActionResult Delete([FromQuery] int? eventId)
         {
-            if (custId == null || eventId == null)
+            //TODO Make customer list only contain people on movie
+
+            if (eventId == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            var guestBooking = await _context.Guests
-                .Include(g => g.Customer)
-                .Include(g => g.Event)
-                .Where(m => m.CustomerId == custId)
-                .FirstOrDefaultAsync(m => m.EventId == eventId);
+            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", eventId);
 
-            if (guestBooking == null)
+            var customers = _context.Customers.ToList();
+
+            var currentGuests = _context.Guests
+                                        .Where(g => g.EventId == eventId)
+                                        .ToList();
+
+            customers.RemoveAll(c => currentGuests.Any(g => g.CustomerId == c.Id));
+
+            ViewData["CustomerId"] = new SelectList(customers, "Id", "Email");
+
+            var @event = _context.Events.Find(eventId);
+            if (@event == null)
             {
-                return NotFound();
+                return BadRequest();
             }
+
+            ViewData["EventTitle"] = @event.Title;
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete([Bind("CustomerId,EventId,Attended")] GuestBooking guestBooking)
+        {
+            if (ModelState.IsValid)
+            {
+                //Check if guest booking already exists
+                if (_context.Guests.Any(g => g.CustomerId == guestBooking.CustomerId && g.EventId == guestBooking.EventId))
+                {
+                    ModelState.AddModelError(string.Empty, "Booking already exists");
+                }
+                else
+                {
+                    _context.Remove(guestBooking);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Events");
+                }
+            }
+
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", guestBooking.CustomerId);
+            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", guestBooking.EventId);
+
+            var @event = await _context.Events.FindAsync(guestBooking.EventId);
+            if (@event == null)
+            {
+                return BadRequest();
+            }
+
+            ViewData["EventTitle"] = @event.Title;
 
             return View(guestBooking);
-        }
-
-        
-
-        // POST: GuestBookings/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int CustomerId, int EventId)
-        {
-            GuestBooking guestBooking = await _context.Guests.FindAsync(CustomerId, EventId);
-            _context.Guests.Remove(guestBooking);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool GuestBookingExists(int id)
-        {
-            return _context.Guests.Any(e => e.CustomerId == id);
         }
     }
 }
