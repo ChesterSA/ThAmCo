@@ -21,7 +21,9 @@ namespace ThAmCo.Events.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Events.ToListAsync());
+            var eventsDbContext = _context.Events
+                                          .Where(e => e.isActive);
+            return View(await eventsDbContext.ToListAsync());
         }
 
 
@@ -35,7 +37,9 @@ namespace ThAmCo.Events.Controllers
             }
 
             var @event = await _context.Events
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                       .Where(e => e.isActive)
+                                       .FirstOrDefaultAsync(m => m.Id == id);
+
             if (@event == null)
             {
                 return NotFound();
@@ -59,6 +63,7 @@ namespace ThAmCo.Events.Controllers
         {
             if (ModelState.IsValid)
             {
+                @event.isActive = true;
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -75,7 +80,7 @@ namespace ThAmCo.Events.Controllers
             }
 
             Event @event = await _context.Events.FindAsync(id);
-            if (@event == null)
+            if (@event == null || !@event.isActive)
             {
                 return NotFound();
             }
@@ -113,6 +118,7 @@ namespace ThAmCo.Events.Controllers
 
                 try
                 {
+                    @event.isActive = true;
                     _context.Update(@event);
                     await _context.SaveChangesAsync();
                 }
@@ -141,7 +147,9 @@ namespace ThAmCo.Events.Controllers
             }
 
             var @event = await _context.Events
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                       .Where(e => e.isActive)
+                                       .FirstOrDefaultAsync(e => e.Id == id);
+
             if (@event == null)
             {
                 return NotFound();
@@ -156,7 +164,8 @@ namespace ThAmCo.Events.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @event = await _context.Events.FindAsync(id);
-            _context.Events.Remove(@event);
+            //_context.Events.Remove(@event);
+            @event.isActive = false;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
