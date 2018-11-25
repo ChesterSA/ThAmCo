@@ -11,6 +11,9 @@ namespace ThAmCo.Events.Data
         public int Id { get; set; }
 
         [Required]
+        public string StaffCode { get; set; }
+
+        [Required]
         public string Surname { get; set; }
 
         [Required]

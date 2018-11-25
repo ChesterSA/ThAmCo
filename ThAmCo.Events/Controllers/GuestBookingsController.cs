@@ -19,8 +19,8 @@ namespace ThAmCo.Events.Controllers
         }
 
 
-        // GET: GuestBookings/Create
-        public IActionResult Create([FromQuery] int? eventId)
+        // GET: GuestBookings/CreateFromEvent
+        public IActionResult CreateFromEvent([FromQuery] int? eventId)
         {
             if (eventId == null)
             {
@@ -48,12 +48,41 @@ namespace ThAmCo.Events.Controllers
             return View();
         }
 
+        // GET: GuestBookings/CreateFromCustomer
+        public IActionResult CreateFromCustomer([FromQuery] int? customerId)
+        {
+            if (customerId == null)
+            {
+                return BadRequest();
+            }
+
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", customerId);
+
+            var events = _context.Events.ToList();
+            var currentGuests = _context.Guests
+                                        .Where(g => g.CustomerId == customerId)
+                                        .ToList();
+            events.RemoveAll(c => currentGuests.Any(g => g.EventId == c.Id));
+
+            ViewData["EventId"] = new SelectList(events, "Id", "Title");
+
+            var customer = _context.Customers.Find(customerId);
+            if (customer == null)
+            {
+                return BadRequest();
+            }
+
+            ViewData["CustomerName"] = customer.FirstName + " " + customer.Surname;
+
+            return View();
+        }
+
         // POST: GuestBookings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerId,EventId,Attended")] GuestBooking guestBooking)
+        public async Task<IActionResult> Create([Bind("StaffId,EventId,Attended")] GuestBooking guestBooking)
         {
             if (ModelState.IsValid)
             {

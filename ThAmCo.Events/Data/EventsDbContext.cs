@@ -67,9 +67,9 @@ namespace ThAmCo.Events.Data
                 );
 
                 builder.Entity<Staff>().HasData(
-                    new Staff { Id = 1, Surname = "Shaw", FirstName = "Sam" },
-                    new Staff { Id = 2, Surname = "Martin", FirstName = "Andrew" },
-                    new Staff { Id = 3, Surname = "Osbourne", FirstName = "Jeremy" }
+                    new Staff { Id = 1, StaffCode = "SS1", Surname = "Shaw", FirstName = "Sam" },
+                    new Staff { Id = 2, StaffCode = "AMN2", Surname = "Martin", FirstName = "Andrew" },
+                    new Staff { Id = 3, StaffCode = "JO3", Surname = "Osbourne", FirstName = "Jeremy" }
                 );
 
                 builder.Entity<Event>().HasData(
