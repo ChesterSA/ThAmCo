@@ -63,18 +63,24 @@ namespace ThAmCo.Events.Data
                 builder.Entity<Customer>().HasData(
                     new Customer { Id = 1, Surname = "Robertson", FirstName = "Robert", Email = "bob@example.com" },
                     new Customer { Id = 2, Surname = "Thornton", FirstName = "Betty", Email = "betty@example.com" },
-                    new Customer { Id = 3, Surname = "Jellybeans", FirstName = "Jin", Email = "jin@example.com" }
+                    new Customer { Id = 3, Surname = "Jellybeans", FirstName = "Jin", Email = "jin@example.com" },
+                    new Customer { Id = 4, Surname = "Johnson", FirstName = "Guy", Email = "guy@example.com" },
+                    new Customer { Id = 5, Surname = "Noble", FirstName = "Stacey", Email = "stacey@example.com" },
+                    new Customer { Id = 6, Surname = "Simons", FirstName = "Martha", Email = "martha@example.com" }
                 );
 
                 builder.Entity<Staff>().HasData(
                     new Staff { Id = 1, StaffCode = "SS1", Surname = "Shaw", FirstName = "Sam" },
-                    new Staff { Id = 2, StaffCode = "AMN2", Surname = "Martin", FirstName = "Andrew" },
-                    new Staff { Id = 3, StaffCode = "JO3", Surname = "Osbourne", FirstName = "Jeremy" }
+                    new Staff { Id = 2, StaffCode = "AM2", Surname = "Martin", FirstName = "Andrew" },
+                    new Staff { Id = 3, StaffCode = "JO3", Surname = "Usbourne", FirstName = "Jeremy" },
+                    new Staff { Id = 4, StaffCode = "KK4", Surname = "Kelly", FirstName = "Kyle" },
+                    new Staff { Id = 5, StaffCode = "SB5", Surname = "Belmont", FirstName = "Simon" },
+                    new Staff { Id = 6, StaffCode = "HS6", Surname = "Smith", FirstName = "Harry" }
                 );
 
                 builder.Entity<Event>().HasData(
-                    new Event { Id = 1, isActive  = true, Title = "Bob's Big 50", Date = new DateTime(2016, 4, 12), Duration = new TimeSpan(6, 0, 0), TypeId = "PTY" },
-                    new Event { Id = 2, isActive = true,  Title = "Best Wedding Yet", Date = new DateTime(2018, 12, 1), Duration = new TimeSpan(12, 0, 0), TypeId = "WED" }
+                    new Event { Id = 1, IsActive  = true, Title = "Bob's Big 50", Date = new DateTime(2016, 4, 12), Duration = new TimeSpan(6, 0, 0), TypeId = "PTY" },
+                    new Event { Id = 2, IsActive = true,  Title = "Best Wedding Yet", Date = new DateTime(2018, 12, 1), Duration = new TimeSpan(12, 0, 0), TypeId = "WED" }
                 );
 
                 builder.Entity<GuestBooking>().HasData(

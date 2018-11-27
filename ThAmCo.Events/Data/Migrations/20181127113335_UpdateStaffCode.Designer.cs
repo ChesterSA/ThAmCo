@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThAmCo.Events.Data;
 
 namespace ThAmCo.Events.Data.Migrations
 {
     [DbContext(typeof(EventsDbContext))]
-    partial class EventsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181127113335_UpdateStaffCode")]
+    partial class UpdateStaffCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,10 +44,7 @@ namespace ThAmCo.Events.Data.Migrations
                     b.HasData(
                         new { Id = 1, Email = "bob@example.com", FirstName = "Robert", Surname = "Robertson" },
                         new { Id = 2, Email = "betty@example.com", FirstName = "Betty", Surname = "Thornton" },
-                        new { Id = 3, Email = "jin@example.com", FirstName = "Jin", Surname = "Jellybeans" },
-                        new { Id = 4, Email = "guy@example.com", FirstName = "Guy", Surname = "Johnson" },
-                        new { Id = 5, Email = "stacey@example.com", FirstName = "Stacey", Surname = "Noble" },
-                        new { Id = 6, Email = "martha@example.com", FirstName = "Martha", Surname = "Simons" }
+                        new { Id = 3, Email = "jin@example.com", FirstName = "Jin", Surname = "Jellybeans" }
                     );
                 });
 
@@ -122,11 +121,7 @@ namespace ThAmCo.Events.Data.Migrations
 
                     b.HasData(
                         new { Id = 1, FirstName = "Sam", StaffCode = "SS1", Surname = "Shaw" },
-                        new { Id = 2, FirstName = "Andrew", StaffCode = "AM2", Surname = "Martin" },
-                        new { Id = 3, FirstName = "Jeremy", StaffCode = "JO3", Surname = "Usbourne" },
-                        new { Id = 4, FirstName = "Kyle", StaffCode = "KK4", Surname = "Kelly" },
-                        new { Id = 5, FirstName = "Simon", StaffCode = "SB5", Surname = "Belmont" },
-                        new { Id = 6, FirstName = "Harry", StaffCode = "HS6", Surname = "Smith" }
+                        new { Id = 2, FirstName = "Andrew", StaffCode = "AMN2", Surname = "Martin" }
                     );
                 });
 

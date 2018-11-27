@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ThAmCo.Events.Data
 {
-    public class Event
+    public class EventList
     {
         public int Id { get; set; }
 
@@ -20,6 +22,8 @@ namespace ThAmCo.Events.Data
 
         [Required, MaxLength(3), MinLength(3)]
         public string TypeId { get; set; }
+
+        public bool CorrectStaff { get; set; }
 
         public List<GuestBooking> Bookings { get; set; }
 

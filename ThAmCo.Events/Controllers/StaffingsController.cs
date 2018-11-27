@@ -34,7 +34,7 @@ namespace ThAmCo.Events.Controllers
                                        .ToList();
             staff.RemoveAll(s => currentStaff.Any(g => g.StaffId == s.Id));
 
-            ViewData["StaffId"] = new SelectList(staff, "Id", "Email");
+            ViewData["StaffId"] = new SelectList(staff, "Id", "StaffCode");
 
             var @event = _context.Events.Find(eventId);
             if (@event == null)
@@ -112,34 +112,45 @@ namespace ThAmCo.Events.Controllers
         }
 
         // GET: Staffings/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete([FromQuery] int? eventId)
         {
-            if (id == null)
+            if (eventId == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            var staffing = await _context.Workers
-                .Include(s => s.Event)
-                .Include(s => s.Staff)
-                .FirstOrDefaultAsync(m => m.StaffId == id);
-            if (staffing == null)
+            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", eventId);
+
+            var currentWorkers = _context.Workers
+                                         .Where(g => g.EventId == eventId)
+                                         .Include(gb => gb.Staff)
+                                         .ToList();
+
+            ViewData["StaffId"] = new SelectList(currentWorkers, "StaffId", "Staff.StaffCode");
+
+            var @event = _context.Events.Find(eventId);
+            if (@event == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            return View(staffing);
+            ViewData["EventTitle"] = @event.Title;
+
+            return View();
         }
 
-        // POST: Staffings/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete([Bind("StaffId,EventId")] Staffing staffing)
         {
-            var staffing = await _context.Workers.FindAsync(id);
-            _context.Workers.Remove(staffing);
+            var worker = await _context.Workers
+                                        .Where(w => w.EventId == staffing.EventId)
+                                        .Where(w => w.StaffId == staffing.StaffId)
+                                        .FirstOrDefaultAsync();
+
+            _context.Workers.Remove(worker);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index","Events");
+            return RedirectToAction("Index", "Events");
         }
 
         private bool StaffingExists(int id)
