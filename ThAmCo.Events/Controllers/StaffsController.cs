@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThAmCo.Events.Data;
+using ThAmCo.Events.Models;
 
 namespace ThAmCo.Events.Controllers
 {
@@ -33,7 +34,24 @@ namespace ThAmCo.Events.Controllers
             }
 
             var staff = await _context.Staff
+                                      .Select( s => new StaffDetailsViewModel
+                                      {
+                                          Id = s.Id,
+                                          FirstName = s.FirstName,
+                                          Surname = s.Surname,
+                                          StaffCode = s.StaffCode,
+                                          Events = _context.Events
+                                                           .Where(e => e.Id == s.Id)
+                                                           .Select(e => new StaffEventViewModel
+                                                           {
+                                                               Id = e.Id,
+                                                               Date = e.Date,
+                                                               Title = e.Title,
+                                                               TypeId = e.TypeId
+                                                           })
+                                      })
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (staff == null)
             {
                 return NotFound();

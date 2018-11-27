@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThAmCo.Events.Data;
+using ThAmCo.Events.Models;
 
 namespace ThAmCo.Events.Controllers
 {
@@ -60,7 +61,33 @@ namespace ThAmCo.Events.Controllers
             }
 
             var @event = await _context.Events
-                                       .Where(e => e.IsActive)
+                                       .Select(e => new EventDetailsViewModel
+                                       {
+                                           Id = e.Id,
+                                           IsActive = e.IsActive,
+                                           Title = e.Title,
+                                           Date = e.Date,
+                                           Duration = e.Duration,
+                                           TypeId = e.TypeId,
+                                           Guests = _context.Guests
+                                                            .Where(g => g.EventId == e.Id)
+                                                            .Select(g => new EventGuestViewModel
+                                                            {
+                                                                Id = g.Customer.Id,
+                                                                FirstName = g.Customer.FirstName,
+                                                                Surname = g.Customer.Surname,
+                                                                Email = g.Customer.Email
+                                                            }),
+                                           Staff = _context.Workers
+                                                           .Where(w => w.EventId == e.Id)
+                                                           .Select(w => new EventStaffViewModel
+                                                           {
+                                                               Id = w.Staff.Id,
+                                                               StaffCode = w.Staff.StaffCode,
+                                                               FirstName = w.Staff.FirstName,
+                                                               Surname = w.Staff.Surname
+                                                           })
+                                       })
                                        .FirstOrDefaultAsync(m => m.Id == id);
 
             if (@event == null)
