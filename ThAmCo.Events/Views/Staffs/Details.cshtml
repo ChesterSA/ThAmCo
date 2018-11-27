@@ -1,4 +1,4 @@
-﻿@model ThAmCo.Events.Data.Staff
+﻿@model ThAmCo.Events.Models.StaffDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -9,7 +9,7 @@
 <div>
     <h4>Staff</h4>
     <hr />
-    <dl class="dl-horizontal">
+    <dl>
         <dt>
             @Html.DisplayNameFor(model => model.StaffCode)
         </dt>
@@ -29,6 +29,57 @@
             @Html.DisplayFor(model => model.FirstName)
         </dd>
     </dl>
+</div>
+<div>
+    @if (Model.Events.Any())
+    {
+        <h4>Events</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        Title
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        TypeId
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Events)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Date)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TypeId)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Details", "Details", "Events", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p><br/>Not working any events</p>
+    }
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
