@@ -55,6 +55,7 @@
                 <a asp-controller="GuestBookings" asp-action="Delete" asp-route-eventid="@item.Id">Remove Guest</a> |
                 <a asp-controller="Staffings" asp-action="CreateFromEvent" asp-route-eventid="@item.Id">Add Staff</a> |
                 <a asp-controller="Staffings" asp-action="Delete" asp-route-eventid="@item.Id">Remove Staff</a> |
+                <a asp-action="AvailableVenues" asp-route-eventid="@item.Id">Venues</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

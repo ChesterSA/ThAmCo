@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThAmCo.Events.Data;
 using ThAmCo.Events.Models;
+using ThAmCo.Venues.Data;
 
 namespace ThAmCo.Events.Controllers
 {
     public class EventsController : Controller
     {
         private readonly EventsDbContext _context;
+        private readonly VenuesDbContext _venuesContext;
 
         public EventsController(EventsDbContext context)
         {
@@ -24,6 +28,7 @@ namespace ThAmCo.Events.Controllers
         {
             var eventsDbContext = _context.Events
                                           .Where(e => e.IsActive);
+
 
             var events = await eventsDbContext.ToListAsync();
 
@@ -60,6 +65,11 @@ namespace ThAmCo.Events.Controllers
                 return NotFound();
             }
 
+            
+
+            //var venues = _venuesContext.Venues
+            //                           .Where(v => suitabilities.Any(s => s.VenueCode == v.Code));
+
             var @event = await _context.Events
                                        .Select(e => new EventDetailsViewModel
                                        {
@@ -89,6 +99,20 @@ namespace ThAmCo.Events.Controllers
                                                            })
                                        })
                                        .FirstOrDefaultAsync(m => m.Id == id);
+
+            var suitabilities = _venuesContext.Suitabilities
+                                              .Where(s => _venuesContext.EventTypes
+                                                                        .Where(e => e.Id == @event.TypeId)
+                                              .Any(et => et.Id == s.EventTypeId)
+                                              );
+
+            @event.Venues = suitabilities.Select(s => new VenuesViewModel
+                                         {
+                                            Code = s.Venue.Code,
+                                            Capacity = s.Venue.Capacity,
+                                            Description = s.Venue.Description,
+                                            Name = s.Venue.Name
+                                         });
 
             if (@event == null)
             {
@@ -217,6 +241,56 @@ namespace ThAmCo.Events.Controllers
             @event.IsActive = false;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> AvailableVenues(int? eventid)
+        {
+            if (eventid == null)
+            {
+                return NotFound();
+            }
+
+            var curEvent = await _context.Events.FindAsync(eventid);
+
+            String eventType = curEvent.TypeId;
+            DateTime beginDate = curEvent.Date;
+            DateTime endDate = curEvent.Date.Add(curEvent.Duration.Value);
+
+            var availableVenues = new List<AvailableVenuesDto>().AsEnumerable();
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new System.Uri("http://localhost:23652");
+
+            String s = "api/Availability?eventType=" + eventType
+                       + "&beginDate=" + beginDate.ToString("yyyy/MM/dd")
+                       + "&endDate=" + endDate.ToString("yyyy/MM/dd");
+            Debug.WriteLine(s);
+
+            HttpResponseMessage response = await client.GetAsync("api/Availability?eventType=" + eventType
+                + "&beginDate=" + beginDate.ToString("yyyy/MM/dd")
+                + "&endDate=" + endDate.ToString("yyyy/MM/dd"));
+
+            Debug.WriteLine(response.RequestMessage);
+
+            //handle empty venues
+
+            if (response.IsSuccessStatusCode)
+            {
+                availableVenues = await response.Content.ReadAsAsync<IEnumerable<AvailableVenuesDto>>();
+
+                if(availableVenues.Count() == 0)
+                {
+                    Debug.WriteLine("No available venues");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Recieved a bad response from service");
+            }
+
+            ViewData["EventTitle"] = curEvent.Title;
+
+            return View(availableVenues);
         }
 
         private bool EventExists(int id)
