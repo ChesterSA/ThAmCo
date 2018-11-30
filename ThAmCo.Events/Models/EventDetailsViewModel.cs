@@ -27,7 +27,5 @@ namespace ThAmCo.Events.Models
         public IEnumerable<EventGuestViewModel> Guests { get; set; } 
 
         public IEnumerable<EventStaffViewModel> Staff { get; set; }
-
-        public IEnumerable<VenuesViewModel> Venues { get; set; }
     }
 }

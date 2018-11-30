@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ThAmCo.Events.Data;
 using ThAmCo.Events.Models;
 using ThAmCo.Venues.Data;
+using ThAmCo.Venues.Models;
 
 namespace ThAmCo.Events.Controllers
 {
     public class EventsController : Controller
     {
         private readonly EventsDbContext _context;
-        private readonly VenuesDbContext _venuesContext;
 
         public EventsController(EventsDbContext context)
         {
@@ -100,20 +101,6 @@ namespace ThAmCo.Events.Controllers
                                                            })
                                        })
                                        .FirstOrDefaultAsync(m => m.Id == id);
-
-            var suitabilities = _venuesContext.Suitabilities
-                                              .Where(s => _venuesContext.EventTypes
-                                                                        .Where(e => e.Id == @event.TypeId)
-                                              .Any(et => et.Id == s.EventTypeId)
-                                              );
-
-            @event.Venues = suitabilities.Select(s => new VenuesViewModel
-                                         {
-                                            Code = s.Venue.Code,
-                                            Capacity = s.Venue.Capacity,
-                                            Description = s.Venue.Description,
-                                            Name = s.Venue.Name
-                                         });
 
             if (@event == null)
             {
@@ -290,8 +277,34 @@ namespace ThAmCo.Events.Controllers
             }
 
             ViewData["EventTitle"] = curEvent.Title;
+            ViewData["EventDate"] = curEvent.Date.ToString("yyyy/MM/dd");
 
             return View(availableVenues);
+        }
+
+        public async Task<IActionResult> ReserveVenue(DateTime eventDate, string venueCode, string staffId)
+        {
+            if (eventDate == null || venueCode == null || staffId == null)
+            {
+                return BadRequest();
+            }
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new System.Uri("http://localhost:23652");
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+
+            ReservationPostDto reservation = new ReservationPostDto();
+            reservation.EventDate = eventDate;
+            reservation.StaffId = staffId;
+            reservation.VenueCode = venueCode;
+
+            HttpResponseMessage response = await client.PostAsJsonAsync("api/reservations", reservation);            string reference = venueCode + eventDate.ToString("yyyyMMdd");            HttpResponseMessage response2 = await client.GetAsync("api/reservations/" + reference);            var x = await response.Content.ReadAsAsync<Models.ReservationGetDto>();            Debug.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!! " + x.VenueCode);            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction(nameof(Index));
+            }            else
+            {
+                return RedirectToAction(nameof(AvailableVenues));
+            }
         }
 
         private bool EventExists(int id)
