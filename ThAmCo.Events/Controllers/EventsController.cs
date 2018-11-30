@@ -45,6 +45,7 @@ namespace ThAmCo.Events.Controllers
                 el.Title = e.Title;
                 el.TypeId = e.TypeId;
 
+
                 int guestCount = _context.Guests.Where(v => v.EventId == e.Id).Count();
                 int staffCount = _context.Guests.Where(v => v.EventId == e.Id).Count();
                 el.CorrectStaff = (staffCount >= guestCount / 10);
