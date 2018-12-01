@@ -29,6 +29,12 @@
             @Html.DisplayFor(model => model.Duration)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Venue)
+        </dt>
+        <dd>
+           --@Html.DisplayFor(model => model.Venue)--
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.CorrectStaff)
         </dt>
         <dd>
@@ -49,6 +55,8 @@
     </dl>
 </div>
 <div>
+    <h4>Guests</h4>
+    <hr />
     <table class="table">
         <thead>
             <tr>
@@ -85,7 +93,7 @@
 
                     </td>
                     <td>
-                        @Html.ActionLink("Details", "Details", "Customers", new { id = item.Id})
+                        @Html.ActionLink("Details", "Details", "Customers", new { id = item.Id })
                     </td>
                 </tr>
             }
@@ -93,6 +101,8 @@
     </table>
 </div>
 <div>
+    <h4>Staff</h4>
+    <hr />
     <table class="table">
         <thead>
             <tr>

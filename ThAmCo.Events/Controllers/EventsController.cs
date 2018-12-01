@@ -62,6 +62,8 @@ namespace ThAmCo.Events.Controllers
                 return NotFound();
             }
 
+           
+
             var @event = await _context.Events
                                        .Select(e => new EventDetailsViewModel
                                        {
@@ -71,6 +73,7 @@ namespace ThAmCo.Events.Controllers
                                            Date = e.Date,
                                            Duration = e.Duration,
                                            TypeId = e.TypeId,
+                                           Venue = e.Venue,
                                            Guests = _context.Guests
                                                             .Where(g => g.EventId == e.Id)
                                                             .Select(g => new EventGuestViewModel
@@ -97,7 +100,7 @@ namespace ThAmCo.Events.Controllers
 
             int guestCount = guestList.Count();
             int staffCount = staffList.Count();
-            Debug.WriteLine("guestCount: " + guestCount + "| staffCount: " + staffCount + "| guestCount/10: " + guestCount / 10 + "| CorrectStaff: " + (staffCount > 1 && staffCount >= guestCount / 10));
+            
 
             @event.CorrectStaff = (staffCount > 0 && staffCount >= (guestCount / 10));
 
@@ -227,14 +230,20 @@ namespace ThAmCo.Events.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @event = await _context.Events.FindAsync(id);
-            //@event.IsActive = false;
+            @event.IsActive = false;
 
             _context.Guests.RemoveRange(_context.Guests
                                         .Where(g => g.EventId == id));
             _context.Workers.RemoveRange(_context.Workers
                                         .Where(g => g.EventId == id));
 
-            //DELETE RESERVATION
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new System.Uri("http://localhost:23652");
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+
+            HttpResponseMessage delete = await client.DeleteAsync("api/reservations/" + @event.Venue + @event.Date.ToString("yyyyMMdd"));
+
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -297,6 +306,10 @@ namespace ThAmCo.Events.Controllers
                 return BadRequest();
             }
             var @event = await _context.Events.FindAsync(eventid);
+            @event.Venue = venueCode;
+            _context.Update(@event);
+            await _context.SaveChangesAsync();
+
             DateTime eventDate = @event.Date;
 
             HttpClient client = new HttpClient();
