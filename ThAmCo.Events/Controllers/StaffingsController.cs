@@ -144,9 +144,9 @@ namespace ThAmCo.Events.Controllers
         public async Task<IActionResult> Delete([Bind("StaffId,EventId")] Staffing staffing)
         {
             var worker = await _context.Workers
-                                        .Where(w => w.EventId == staffing.EventId)
-                                        .Where(w => w.StaffId == staffing.StaffId)
-                                        .FirstOrDefaultAsync();
+                                       .Where(w => w.EventId == staffing.EventId)
+                                       .Where(w => w.StaffId == staffing.StaffId)
+                                       .FirstOrDefaultAsync();
 
             _context.Workers.Remove(worker);
             await _context.SaveChangesAsync();
