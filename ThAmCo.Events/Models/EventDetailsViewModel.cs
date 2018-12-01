@@ -9,6 +9,8 @@ namespace ThAmCo.Events.Models
 {
     public class EventDetailsViewModel
     {
+
+
         public int Id { get; set; }
 
         public bool IsActive { get; set; }
@@ -30,7 +32,7 @@ namespace ThAmCo.Events.Models
 
         public bool FirstAider { get; set; }
 
-        //public string Venue { get; set; }
+        public int GuestCount { get; set;}
 
         public IEnumerable<EventGuestViewModel> Guests { get; set; } 
 

@@ -71,6 +71,7 @@ namespace ThAmCo.Events.Controllers
                                            Duration = e.Duration,
                                            TypeId = e.TypeId,
                                            Venue = e.Venue,
+                                           GuestCount = _context.Guests.Where(v => v.EventId == e.Id).Count(),
                                            Guests = _context.Guests
                                                             .Where(g => g.EventId == e.Id)
                                                             .Select(g => new EventGuestViewModel

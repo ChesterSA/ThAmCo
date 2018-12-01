@@ -44,6 +44,7 @@ namespace ThAmCo.Events.Controllers
             }
 
             ViewData["EventTitle"] = @event.Title;
+            ViewData["EventId"] = @event.Id;
 
             return View();
         }
