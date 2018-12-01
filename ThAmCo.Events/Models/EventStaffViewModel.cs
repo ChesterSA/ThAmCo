@@ -14,9 +14,6 @@ namespace ThAmCo.Events.Models
         public string StaffCode { get; set; }
 
         [Required]
-        public string Surname { get; set; }
-
-        [Required]
-        public string FirstName { get; set; }
+        public string Name { get; set; }
     }
 }

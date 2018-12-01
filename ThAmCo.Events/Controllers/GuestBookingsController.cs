@@ -153,5 +153,66 @@ namespace ThAmCo.Events.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Events");
         }
+
+        // GET: Customers/Edit/5
+        public async Task<IActionResult> Edit(int? eventid, int? customerid)
+        {
+            if (eventid == null || customerid == null)
+            {
+                return NotFound();
+            }
+
+            var guest = await _context.Guests.Where(e => e.EventId == eventid)
+                                             .Where(e => e.CustomerId == customerid)
+                                             .FirstOrDefaultAsync();
+
+            if (guest == null)
+            {
+                return NotFound();
+            }
+            return View(guest);
+        }
+
+        // POST: Customers/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int eventid, int customerid, [Bind("CustomerId, EventId, Attended")] GuestBooking GuestBooking)
+        {
+            if (eventid != GuestBooking.EventId || customerid != GuestBooking.CustomerId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(GuestBooking);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!GuestExists(GuestBooking.EventId, GuestBooking.CustomerId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index", "Events");
+            }
+            return View(GuestBooking);
+        }
+        private bool GuestExists(int eventid, int customerid)
+        {
+            return _context.Guests.Where(e => e.EventId == eventid)
+                                  .Where(e => e.CustomerId == customerid)
+                                  .Count() > 0;
+        }
     }
+    
 }

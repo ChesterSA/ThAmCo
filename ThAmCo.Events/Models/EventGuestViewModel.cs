@@ -11,14 +11,13 @@ namespace ThAmCo.Events.Models
         public int Id { get; set; }
 
         [Required]
-        public string Surname { get; set; }
-
-        [Required]
-        public string FirstName { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+
+        public bool Attended { get; set; }
 
     }
 }

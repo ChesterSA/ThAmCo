@@ -30,7 +30,6 @@ namespace ThAmCo.Events.Controllers
             var eventsDbContext = _context.Events
                                           .Where(e => e.IsActive);
 
-
             var events = await eventsDbContext.ToListAsync();
 
             List<EventList> eventlists = new List<EventList>();
@@ -62,8 +61,6 @@ namespace ThAmCo.Events.Controllers
                 return NotFound();
             }
 
-           
-
             var @event = await _context.Events
                                        .Select(e => new EventDetailsViewModel
                                        {
@@ -79,9 +76,9 @@ namespace ThAmCo.Events.Controllers
                                                             .Select(g => new EventGuestViewModel
                                                             {
                                                                 Id = g.Customer.Id,
-                                                                FirstName = g.Customer.FirstName,
-                                                                Surname = g.Customer.Surname,
-                                                                Email = g.Customer.Email
+                                                                Name = g.Customer.FirstName + " " + g.Customer.Surname,
+                                                                Email = g.Customer.Email,
+                                                                Attended = g.Attended
                                                             }),
                                            Staff = _context.Workers
                                                            .Where(w => w.EventId == e.Id)
@@ -89,8 +86,7 @@ namespace ThAmCo.Events.Controllers
                                                            {
                                                                Id = w.Staff.Id,
                                                                StaffCode = w.Staff.StaffCode,
-                                                               FirstName = w.Staff.FirstName,
-                                                               Surname = w.Staff.Surname
+                                                               Name = w.Staff.FirstName + " " + w.Staff.Surname
                                                            })
                                        })
                                        .FirstOrDefaultAsync(m => m.Id == id);
@@ -100,10 +96,8 @@ namespace ThAmCo.Events.Controllers
 
             int guestCount = guestList.Count();
             int staffCount = staffList.Count();
-            
 
             @event.CorrectStaff = (staffCount > 0 && staffCount >= (guestCount / 10));
-
             @event.FirstAider = (staffList.Where(s => s.Staff.FirstAider).Count() > 0);
 
             if (@event == null)
@@ -237,9 +231,7 @@ namespace ThAmCo.Events.Controllers
             _context.Workers.RemoveRange(_context.Workers
                                         .Where(g => g.EventId == id));
 
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new System.Uri("http://localhost:23652");
-            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+            HttpClient client = getClient();
 
             HttpResponseMessage delete = await client.DeleteAsync("api/reservations/" + @event.Venue + @event.Date.ToString("yyyyMMdd"));
 
@@ -263,13 +255,7 @@ namespace ThAmCo.Events.Controllers
 
             var availableVenues = new List<AvailableVenuesDto>().AsEnumerable();
 
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new System.Uri("http://localhost:23652");
-
-            String s = "api/Availability?eventType=" + eventType
-                       + "&beginDate=" + beginDate.ToString("yyyy/MM/dd")
-                       + "&endDate=" + endDate.ToString("yyyy/MM/dd");
-            Debug.WriteLine(s);
+            HttpClient client = getClient();
 
             HttpResponseMessage response = await client.GetAsync("api/Availability?eventType=" + eventType
                 + "&beginDate=" + beginDate.ToString("yyyy/MM/dd")
@@ -312,9 +298,7 @@ namespace ThAmCo.Events.Controllers
 
             DateTime eventDate = @event.Date;
 
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new System.Uri("http://localhost:23652");
-            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+            HttpClient client = getClient();
             
             ReservationPostDto reservation = new ReservationPostDto();
             reservation.EventDate = eventDate;
@@ -338,6 +322,15 @@ namespace ThAmCo.Events.Controllers
                 return RedirectToAction(nameof(AvailableVenues));
             }
 
+        }
+
+        private HttpClient getClient()
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new System.Uri("http://localhost:23652");
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+
+            return client;
         }
 
         private bool EventExists(int id)
