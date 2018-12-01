@@ -70,12 +70,12 @@ namespace ThAmCo.Events.Data
                 );
 
                 builder.Entity<Staff>().HasData(
-                    new Staff { Id = 1, StaffCode = "SS1", Surname = "Shaw", FirstName = "Sam" },
-                    new Staff { Id = 2, StaffCode = "AM2", Surname = "Martin", FirstName = "Andrew" },
-                    new Staff { Id = 3, StaffCode = "JO3", Surname = "Usbourne", FirstName = "Jeremy" },
-                    new Staff { Id = 4, StaffCode = "KK4", Surname = "Kelly", FirstName = "Kyle" },
-                    new Staff { Id = 5, StaffCode = "SB5", Surname = "Belmont", FirstName = "Simon" },
-                    new Staff { Id = 6, StaffCode = "HS6", Surname = "Smith", FirstName = "Harry" }
+                    new Staff { Id = 1, StaffCode = "SS1", Surname = "Shaw", FirstName = "Sam", FirstAider = true },
+                    new Staff { Id = 2, StaffCode = "AM2", Surname = "Martin", FirstName = "Andrew", FirstAider = false },
+                    new Staff { Id = 3, StaffCode = "JO3", Surname = "Usbourne", FirstName = "Jeremy", FirstAider = false },
+                    new Staff { Id = 4, StaffCode = "KK4", Surname = "Kelly", FirstName = "Kyle", FirstAider = true },
+                    new Staff { Id = 5, StaffCode = "SB5", Surname = "Belmont", FirstName = "Simon", FirstAider = false },
+                    new Staff { Id = 6, StaffCode = "HS6", Surname = "Smith", FirstName = "Harry", FirstAider = false }
                 );
 
                 builder.Entity<Event>().HasData(

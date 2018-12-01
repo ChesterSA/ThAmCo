@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ThAmCo.Venues.Data;
 
 namespace ThAmCo.Events.Data
 {
@@ -24,5 +25,7 @@ namespace ThAmCo.Events.Data
         public List<GuestBooking> Bookings { get; set; }
 
         public List<Staffing> Staff { get; set; }
+
+
     }
 }

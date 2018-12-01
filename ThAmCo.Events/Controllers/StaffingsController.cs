@@ -85,8 +85,8 @@ namespace ThAmCo.Events.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Check if guest booking already exists
-                if (_context.Guests.Any(g => g.CustomerId == staffing.StaffId && g.EventId == staffing.EventId))
+                //Check if staffing already exists
+                if (_context.Workers.Any(w => w.StaffId == staffing.StaffId && w.EventId == staffing.EventId))
                 {
                     ModelState.AddModelError(string.Empty, "Booking already exists");
                 }

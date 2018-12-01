@@ -19,6 +19,8 @@ namespace ThAmCo.Events.Data
         [Required]
         public string FirstName { get; set; }
 
+        public bool FirstAider { get; set; }
+
         public List<Staffing> Jobs { get; set; }
     }
 }

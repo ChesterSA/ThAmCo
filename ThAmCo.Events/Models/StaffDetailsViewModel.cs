@@ -19,6 +19,8 @@ namespace ThAmCo.Events.Models
         [Required]
         public string FirstName { get; set; }
 
+        public bool FirstAider { get; set; }
+
         public IEnumerable<StaffEventViewModel> Events { get; set; }
     }
 }

@@ -46,11 +46,6 @@ namespace ThAmCo.Events.Controllers
                 el.Title = e.Title;
                 el.TypeId = e.TypeId;
 
-
-                int guestCount = _context.Guests.Where(v => v.EventId == e.Id).Count();
-                int staffCount = _context.Guests.Where(v => v.EventId == e.Id).Count();
-                el.CorrectStaff = (staffCount >= guestCount / 10);
-
                 eventlists.Add(el);
             }
 
@@ -66,11 +61,6 @@ namespace ThAmCo.Events.Controllers
             {
                 return NotFound();
             }
-
-            
-
-            //var venues = _venuesContext.Venues
-            //                           .Where(v => suitabilities.Any(s => s.VenueCode == v.Code));
 
             var @event = await _context.Events
                                        .Select(e => new EventDetailsViewModel
@@ -101,6 +91,17 @@ namespace ThAmCo.Events.Controllers
                                                            })
                                        })
                                        .FirstOrDefaultAsync(m => m.Id == id);
+
+            var guestList = _context.Guests.Where(v => v.EventId == @event.Id);
+            var staffList = _context.Workers.Where(v => v.EventId == @event.Id);
+
+            int guestCount = guestList.Count();
+            int staffCount = staffList.Count();
+            Debug.WriteLine("guestCount: " + guestCount + "| staffCount: " + staffCount + "| guestCount/10: " + guestCount / 10 + "| CorrectStaff: " + (staffCount > 1 && staffCount >= guestCount / 10));
+
+            @event.CorrectStaff = (staffCount > 0 && staffCount >= (guestCount / 10));
+
+            @event.FirstAider = (staffList.Where(s => s.Staff.FirstAider).Count() > 0);
 
             if (@event == null)
             {
@@ -226,7 +227,14 @@ namespace ThAmCo.Events.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @event = await _context.Events.FindAsync(id);
-            @event.IsActive = false;
+            //@event.IsActive = false;
+
+            _context.Guests.RemoveRange(_context.Guests
+                                        .Where(g => g.EventId == id));
+            _context.Workers.RemoveRange(_context.Workers
+                                        .Where(g => g.EventId == id));
+
+            //DELETE RESERVATION
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -277,34 +285,46 @@ namespace ThAmCo.Events.Controllers
             }
 
             ViewData["EventTitle"] = curEvent.Title;
-            ViewData["EventDate"] = curEvent.Date.ToString("yyyy/MM/dd");
+            ViewData["EventId"] = curEvent.Id;
 
             return View(availableVenues);
         }
 
-        public async Task<IActionResult> ReserveVenue(DateTime eventDate, string venueCode, string staffId)
+        public async Task<IActionResult> ReserveVenue(int? eventid, string venueCode, string staffid)
         {
-            if (eventDate == null || venueCode == null || staffId == null)
+            if (eventid == null || venueCode == null || staffid == null)
             {
                 return BadRequest();
             }
+            var @event = await _context.Events.FindAsync(eventid);
+            DateTime eventDate = @event.Date;
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new System.Uri("http://localhost:23652");
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-
+            
             ReservationPostDto reservation = new ReservationPostDto();
             reservation.EventDate = eventDate;
-            reservation.StaffId = staffId;
+            reservation.StaffId = staffid;
             reservation.VenueCode = venueCode;
 
-            HttpResponseMessage response = await client.PostAsJsonAsync("api/reservations", reservation);            string reference = venueCode + eventDate.ToString("yyyyMMdd");            HttpResponseMessage response2 = await client.GetAsync("api/reservations/" + reference);            var x = await response.Content.ReadAsAsync<Models.ReservationGetDto>();            Debug.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!! " + x.VenueCode);            if (response.IsSuccessStatusCode)
+            string reference = venueCode + eventDate.ToString("yyyyMMdd");
+            HttpResponseMessage delete = await client.DeleteAsync("api/reservations/" + reference);
+
+            HttpResponseMessage post = await client.PostAsJsonAsync("api/reservations", reservation);
+
+            if (post.IsSuccessStatusCode)
             {
-                return RedirectToAction(nameof(Index));
-            }            else
+                
+                HttpResponseMessage getReservation = await client.GetAsync("api/reservations/" + reference);
+                var x = await getReservation.Content.ReadAsAsync<ReservationViewModel>();
+                return View("Reservation", x);
+            }
+            else
             {
                 return RedirectToAction(nameof(AvailableVenues));
-            }
+            }
+
         }
 
         private bool EventExists(int id)

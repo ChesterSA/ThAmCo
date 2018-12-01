@@ -24,6 +24,12 @@ namespace ThAmCo.Events.Models
         [Required, MaxLength(3), MinLength(3)]
         public string TypeId { get; set; }
 
+        public bool CorrectStaff { get; set; }
+
+        public bool FirstAider { get; set; }
+
+        //public string Venue { get; set; }
+
         public IEnumerable<EventGuestViewModel> Guests { get; set; } 
 
         public IEnumerable<EventStaffViewModel> Staff { get; set; }
