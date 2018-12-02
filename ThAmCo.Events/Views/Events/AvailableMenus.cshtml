@@ -1,0 +1,57 @@
+﻿@model IEnumerable<ThAmCo.Events.Models.FoodMenuViewModel>
+
+@{
+    ViewData["Title"] = "AvailableMenus";
+}
+
+<h2>AvailableMenus</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Starter)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Main)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dessert)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cost)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Starter)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Main)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dessert)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cost)
+            </td>
+            <td>
+                @Html.ActionLink("Book", "BookMenu", "Events", new { eventId = ViewData["EventId"], menuId = item.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

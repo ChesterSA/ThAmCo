@@ -232,7 +232,7 @@ namespace ThAmCo.Events.Controllers
             _context.Workers.RemoveRange(_context.Workers
                                         .Where(g => g.EventId == id));
 
-            HttpClient client = getClient();
+            HttpClient client = getClient("23652");
 
             HttpResponseMessage delete = await client.DeleteAsync("api/reservations/" + @event.Venue + @event.Date.ToString("yyyyMMdd"));
 
@@ -256,13 +256,11 @@ namespace ThAmCo.Events.Controllers
 
             var availableVenues = new List<AvailableVenuesDto>().AsEnumerable();
 
-            HttpClient client = getClient();
+            HttpClient client = getClient("23652");
 
             HttpResponseMessage response = await client.GetAsync("api/Availability?eventType=" + eventType
                 + "&beginDate=" + beginDate.ToString("yyyy/MM/dd")
                 + "&endDate=" + endDate.ToString("yyyy/MM/dd"));
-
-            Debug.WriteLine(response.RequestMessage);
 
             //handle empty venues
 
@@ -299,7 +297,7 @@ namespace ThAmCo.Events.Controllers
 
             DateTime eventDate = @event.Date;
 
-            HttpClient client = getClient();
+            HttpClient client = getClient("23652");
             
             ReservationPostDto reservation = new ReservationPostDto();
             reservation.EventDate = eventDate;
@@ -325,10 +323,35 @@ namespace ThAmCo.Events.Controllers
 
         }
 
-        private HttpClient getClient()
+        public async Task<IActionResult> AvailableMenus()
+        {
+            var availableVenues = new List<FoodMenuViewModel>().AsEnumerable();
+
+            HttpClient client = getClient("32824");
+
+            HttpResponseMessage response = await client.GetAsync("api/FoodMenus");
+
+            if (response.IsSuccessStatusCode)
+            {
+                availableVenues = await response.Content.ReadAsAsync<IEnumerable<FoodMenuViewModel>>();
+
+                if (availableVenues.Count() == 0)
+                {
+                    Debug.WriteLine("No available venues");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Recieved a bad response from service");
+            }
+
+            return View(availableVenues);
+        }
+
+        private HttpClient getClient(string port)
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new System.Uri("http://localhost:23652");
+            client.BaseAddress = new System.Uri("http://localhost:" + port);
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 
             return client;

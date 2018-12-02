@@ -16,7 +16,5 @@ namespace ThAmCo.Catering.Data
 
         [Key, Column(Order = 1)]
         public int EventId { get; set; }
-
-        public bool Attended { get; set; }
     }
 }
