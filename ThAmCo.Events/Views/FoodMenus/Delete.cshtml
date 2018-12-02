@@ -1,0 +1,45 @@
+﻿@model ThAmCo.Events.Models.FoodMenuViewModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>FoodMenuViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Starter)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Starter)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Main)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Main)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Dessert)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Dessert)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Cost)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Cost)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

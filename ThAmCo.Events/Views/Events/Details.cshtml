@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-3">
-        <h4>Event</h4>
+        <h4>Event</h4> <br />
         <hr />
         <dl>
             <dt>
@@ -41,11 +41,13 @@
             <dd>
                 @if (Model.Menu != null)
                 {
-                    @Html.DisplayFor(model => model.Menu)
+                    @Html.DisplayFor(model => model.Menu) <br />
+                    @Html.ActionLink("Change Food", "AvailableMenus", "Events", new { eventid = Model.Id }) <br />
+                    @Html.ActionLink("Cancel Food", "CancelMenu", "Events", new { eventid = Model.Id })
                 }
                 else
                 {
-                    @Html.ActionLink("Book Venue", "AvailableVenues", "Events", new { eventid = Model.Id })
+                    @Html.ActionLink("Book Food", "AvailableMenus", "Events", new { eventid = Model.Id })
                 }
             </dd>
             <dt>

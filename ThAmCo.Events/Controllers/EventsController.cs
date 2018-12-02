@@ -379,7 +379,7 @@ namespace ThAmCo.Events.Controllers
             HttpResponseMessage response = await client.GetAsync("api/FoodMenus/" + menuid);
             FoodMenuViewModel menu = await response.Content.ReadAsAsync<FoodMenuViewModel>();
 
-            @event.Menu = menu.Starter + "\n" + menu.Main + "\n" + menu.Dessert;
+            @event.Menu = menu.Starter + " | " + menu.Main + " | " + menu.Dessert;
             @event.FoodCost = menu.Cost;
 
             _context.Update(@event);
@@ -395,8 +395,7 @@ namespace ThAmCo.Events.Controllers
 
             if (post.IsSuccessStatusCode)
             {
-
-                HttpResponseMessage getBooking = await client.GetAsync("api/bookings/" + eventid);
+                HttpResponseMessage getBooking = await client.GetAsync("api/foodmenus/" + menuid);
                 var x = await getBooking.Content.ReadAsAsync<FoodMenuViewModel>();
                 return View("BookMenu", x);
             }
@@ -405,6 +404,23 @@ namespace ThAmCo.Events.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+        }
+
+        public async Task<IActionResult> CancelMenu(int? eventid)
+        {
+            if (eventid == null)
+            {
+                return BadRequest();
+            }
+
+            var @event =  await _context.Events.FindAsync(eventid);
+            @event.FoodCost = 0;
+            @event.Menu = null;
+
+            _context.Update(@event);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id = eventid });
         }
 
         private HttpClient getClient(string port)
