@@ -28,6 +28,11 @@ namespace ThAmCo.Events.Data
 
         public List<Staffing> Staff { get; set; }
 
+        public string Menu { get; set; }
+
+        public double FoodCost { get; set; }
+
+        public double VenueCost { get; set; }
 
     }
 }

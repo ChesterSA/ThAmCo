@@ -72,6 +72,9 @@ namespace ThAmCo.Events.Controllers
                                            TypeId = e.TypeId,
                                            Venue = e.Venue,
                                            GuestCount = _context.Guests.Where(v => v.EventId == e.Id).Count(),
+                                           Menu = e.Menu,
+                                           FoodCost = e.FoodCost,
+                                           VenueCost = e.VenueCost,
                                            Guests = _context.Guests
                                                             .Where(g => g.EventId == e.Id)
                                                             .Select(g => new EventGuestViewModel
@@ -100,6 +103,9 @@ namespace ThAmCo.Events.Controllers
 
             @event.CorrectStaff = (staffCount > 0 && staffCount >= (guestCount / 10));
             @event.FirstAider = (staffList.Where(s => s.Staff.FirstAider).Count() > 0);
+            @event.TotalFoodCost = (@event.FoodCost * @event.GuestCount);
+            @event.TotalCost = @event.TotalCost * @event.VenueCost;
+
 
             if (@event == null)
             {
@@ -284,26 +290,28 @@ namespace ThAmCo.Events.Controllers
             return View(availableVenues);
         }
 
-        public async Task<IActionResult> ReserveVenue(int? eventid, string venueCode, string staffid)
+        public async Task<IActionResult> ReserveVenue(int? eventid, string venueCode, string staffid, double venueCost)
         {
             if (eventid == null || venueCode == null || staffid == null)
             {
                 return BadRequest();
             }
+
             var @event = await _context.Events.FindAsync(eventid);
             @event.Venue = venueCode;
+            @event.VenueCost = venueCost * @event.Duration.Value.Hours;
+
             _context.Update(@event);
             await _context.SaveChangesAsync();
 
             DateTime eventDate = @event.Date;
 
-            HttpClient client = getClient("23652");
-            
             ReservationPostDto reservation = new ReservationPostDto();
             reservation.EventDate = eventDate;
             reservation.StaffId = staffid;
             reservation.VenueCode = venueCode;
 
+            HttpClient client = getClient("23652");
             string reference = venueCode + eventDate.ToString("yyyyMMdd");
             HttpResponseMessage delete = await client.DeleteAsync("api/reservations/" + reference);
 
@@ -323,8 +331,13 @@ namespace ThAmCo.Events.Controllers
 
         }
 
-        public async Task<IActionResult> AvailableMenus()
+        public async Task<IActionResult> AvailableMenus(int? eventid)
         {
+            if (eventid == null)
+            {
+                return BadRequest();
+            }
+
             var availableVenues = new List<FoodMenuViewModel>().AsEnumerable();
 
             HttpClient client = getClient("32824");
@@ -345,7 +358,51 @@ namespace ThAmCo.Events.Controllers
                 Debug.WriteLine("Recieved a bad response from service");
             }
 
+            ViewData["EventId"] = eventid;
+
             return View(availableVenues);
+        }
+
+        public async Task<IActionResult> BookMenu(int? eventid, int? menuid)
+        {
+            if (eventid == null || menuid == null)
+            {
+                return BadRequest();
+            }
+            var @event = await _context.Events.FindAsync(eventid);
+
+            
+            await _context.SaveChangesAsync();
+
+            HttpClient client = getClient("32824");
+
+            HttpResponseMessage response = await client.GetAsync("api/FoodMenus/" + menuid);
+            FoodMenuViewModel menu = await response.Content.ReadAsAsync<FoodMenuViewModel>();
+
+            @event.Menu = menu.Starter + " | " + menu.Main + " | " + menu.Dessert;
+            @event.FoodCost = menu.Cost;
+            _context.Update(@event);
+
+            FoodBookingDto booking = new FoodBookingDto();
+            booking.EventId = (int)eventid;
+            booking.MenuId = (int)menuid;
+
+            HttpResponseMessage delete = await client.DeleteAsync("api/bookings/" + eventid);
+
+            HttpResponseMessage post = await client.PostAsJsonAsync("api/bookings", booking);
+
+            if (post.IsSuccessStatusCode)
+            {
+
+                HttpResponseMessage getBooking = await client.GetAsync("api/bookings/" + eventid);
+                var x = await getBooking.Content.ReadAsAsync<ReservationViewModel>();
+                return View("Reservation", x);
+            }
+            else
+            {
+                return RedirectToAction(nameof(AvailableVenues));
+            }
+
         }
 
         private HttpClient getClient(string port)

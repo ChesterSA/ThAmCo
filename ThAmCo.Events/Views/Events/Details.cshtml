@@ -36,6 +36,24 @@
                 @Html.DisplayFor(model => model.GuestCount)
             </dd>
             <dt>
+                @Html.DisplayNameFor(model => model.Menu)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Menu)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.FoodCost)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.FoodCost)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.TotalFoodCost)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.TotalFoodCost)
+            </dd>
+            <dt>
                 @Html.DisplayNameFor(model => model.Venue)
             </dt>
             <dd>
@@ -47,6 +65,18 @@
                 {
                     @Html.ActionLink("Book Venue", "AvailableVenues", "Events", new { eventid = Model.Id })
                 }
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.VenueCost)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.VenueCost)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.TotalCost)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.TotalCost)
             </dd>
             <dt>
                 @Html.DisplayNameFor(model => model.CorrectStaff)

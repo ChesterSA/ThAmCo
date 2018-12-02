@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using ThAmCo.Catering.Data;
 namespace ThAmCo.Catering.Data
 {
     public class CateringDbContext : DbContext
@@ -52,5 +53,7 @@ namespace ThAmCo.Catering.Data
 
 
         }
+
+        public DbSet<ThAmCo.Catering.Data.Booking> Booking { get; set; }
     }
 }

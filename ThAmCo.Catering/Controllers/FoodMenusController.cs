@@ -29,7 +29,7 @@ namespace ThAmCo.Catering.Controllers
 
         // GET: api/FoodMenus/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFoodMenu([FromQuery] int id)
+        public async Task<IActionResult> GetFoodMenu([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
