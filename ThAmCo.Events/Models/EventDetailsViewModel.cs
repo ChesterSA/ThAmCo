@@ -9,8 +9,6 @@ namespace ThAmCo.Events.Models
 {
     public class EventDetailsViewModel
     {
-
-
         public int Id { get; set; }
 
         public bool IsActive { get; set; }
@@ -36,13 +34,13 @@ namespace ThAmCo.Events.Models
 
         public string Menu { get; set; }
 
-        public double FoodCost { get; set; }
+        public string FoodCost { get; set; }
 
-        public double TotalFoodCost { get; set; }
+        public string TotalFoodCost { get; set; }
 
-        public double VenueCost { get; set; }
+        public string VenueCost { get; set; }
 
-        public double TotalCost { get; set; }
+        public string TotalCost { get; set; }
 
         public IEnumerable<EventGuestViewModel> Guests { get; set; } 
 

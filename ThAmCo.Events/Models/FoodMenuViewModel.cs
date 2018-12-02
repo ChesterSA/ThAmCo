@@ -18,6 +18,6 @@ namespace ThAmCo.Events.Models
 
         public string Dessert { get; set; }
 
-        public double Cost { get; set; }
+        public decimal Cost { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace ThAmCo.Catering.Data
 
         public string Dessert { get; set; }
 
-        public double Cost { get; set; }
+        public decimal Cost { get; set; }
 
         public IEnumerable<Booking> Bookings { get; set;}
     }

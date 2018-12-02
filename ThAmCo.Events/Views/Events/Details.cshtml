@@ -39,7 +39,14 @@
                 @Html.DisplayNameFor(model => model.Menu)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Menu)
+                @if (Model.Menu != null)
+                {
+                    @Html.DisplayFor(model => model.Menu)
+                }
+                else
+                {
+                    @Html.ActionLink("Book Venue", "AvailableVenues", "Events", new { eventid = Model.Id })
+                }
             </dd>
             <dt>
                 @Html.DisplayNameFor(model => model.FoodCost)

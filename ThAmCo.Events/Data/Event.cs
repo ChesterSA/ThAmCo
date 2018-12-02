@@ -30,9 +30,9 @@ namespace ThAmCo.Events.Data
 
         public string Menu { get; set; }
 
-        public double FoodCost { get; set; }
+        public decimal FoodCost { get; set; }
 
-        public double VenueCost { get; set; }
+        public decimal VenueCost { get; set; }
 
     }
 }

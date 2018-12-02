@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ThAmCo.Events.Data;
 using ThAmCo.Events.Models;
-using ThAmCo.Venues.Data;
 using ThAmCo.Venues.Models;
 
 namespace ThAmCo.Events.Controllers
@@ -73,8 +72,9 @@ namespace ThAmCo.Events.Controllers
                                            Venue = e.Venue,
                                            GuestCount = _context.Guests.Where(v => v.EventId == e.Id).Count(),
                                            Menu = e.Menu,
-                                           FoodCost = e.FoodCost,
-                                           VenueCost = e.VenueCost,
+                                           FoodCost = e.FoodCost.ToString("C2"),
+                                           VenueCost = e.VenueCost.ToString("C2"),
+                                           
                                            Guests = _context.Guests
                                                             .Where(g => g.EventId == e.Id)
                                                             .Select(g => new EventGuestViewModel
@@ -103,9 +103,12 @@ namespace ThAmCo.Events.Controllers
 
             @event.CorrectStaff = (staffCount > 0 && staffCount >= (guestCount / 10));
             @event.FirstAider = (staffList.Where(s => s.Staff.FirstAider).Count() > 0);
-            @event.TotalFoodCost = (@event.FoodCost * @event.GuestCount);
-            @event.TotalCost = @event.TotalCost * @event.VenueCost;
 
+            decimal FoodCost = Convert.ToDecimal(@event.FoodCost.Substring(1));
+            decimal VenueCost = Convert.ToDecimal(@event.VenueCost.Substring(1));
+
+            @event.TotalFoodCost = (FoodCost * @event.GuestCount).ToString("C2");
+            @event.TotalCost = ((FoodCost * @event.GuestCount) * VenueCost).ToString("C2");
 
             if (@event == null)
             {
@@ -290,7 +293,7 @@ namespace ThAmCo.Events.Controllers
             return View(availableVenues);
         }
 
-        public async Task<IActionResult> ReserveVenue(int? eventid, string venueCode, string staffid, double venueCost)
+        public async Task<IActionResult> ReserveVenue(int? eventid, string venueCode, string staffid, decimal venueCost)
         {
             if (eventid == null || venueCode == null || staffid == null)
             {
@@ -326,7 +329,7 @@ namespace ThAmCo.Events.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(AvailableVenues));
+                return RedirectToAction(nameof(AvailableVenues), eventid);
             }
 
         }
@@ -371,17 +374,16 @@ namespace ThAmCo.Events.Controllers
             }
             var @event = await _context.Events.FindAsync(eventid);
 
-            
-            await _context.SaveChangesAsync();
-
             HttpClient client = getClient("32824");
 
             HttpResponseMessage response = await client.GetAsync("api/FoodMenus/" + menuid);
             FoodMenuViewModel menu = await response.Content.ReadAsAsync<FoodMenuViewModel>();
 
-            @event.Menu = menu.Starter + " | " + menu.Main + " | " + menu.Dessert;
+            @event.Menu = menu.Starter + "\n" + menu.Main + "\n" + menu.Dessert;
             @event.FoodCost = menu.Cost;
+
             _context.Update(@event);
+            await _context.SaveChangesAsync();
 
             FoodBookingDto booking = new FoodBookingDto();
             booking.EventId = (int)eventid;
@@ -395,12 +397,12 @@ namespace ThAmCo.Events.Controllers
             {
 
                 HttpResponseMessage getBooking = await client.GetAsync("api/bookings/" + eventid);
-                var x = await getBooking.Content.ReadAsAsync<ReservationViewModel>();
-                return View("Reservation", x);
+                var x = await getBooking.Content.ReadAsAsync<FoodMenuViewModel>();
+                return View("BookMenu", x);
             }
             else
             {
-                return RedirectToAction(nameof(AvailableVenues));
+                return RedirectToAction(nameof(Index));
             }
 
         }
