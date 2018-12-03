@@ -115,6 +115,8 @@ namespace ThAmCo.Events.Controllers
                 return NotFound();
             }
 
+            ViewData["EventTitle"] = @event.Title;
+
             return View(@event);
         }
 

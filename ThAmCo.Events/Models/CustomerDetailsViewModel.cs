@@ -6,20 +6,19 @@ using System.Threading.Tasks;
 
 namespace ThAmCo.Events.Models
 {
-    public class StaffDetailsViewModel
+    public class CustomerDetailsViewModel
     {
         public int Id { get; set; }
 
         [Required]
-        public string StaffCode { get; set; }
-
-        [Required]
-        public string Surname { get; set; }
-
-        [Required]
         public string FirstName { get; set; }
 
-        public bool FirstAider { get; set; }
+        [Required]
+        public string LastName { get; set; }
+
+        [Required]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
 
         public IEnumerable<_EventViewModel> Events { get; set; }
     }

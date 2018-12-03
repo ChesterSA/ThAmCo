@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ThAmCo.Events.Models
 {
-    public class StaffEventViewModel
+    public class _EventViewModel
     {
         public int Id { get; set; }
 

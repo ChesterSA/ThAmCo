@@ -42,7 +42,7 @@ namespace ThAmCo.Events.Controllers
                                           StaffCode = s.StaffCode,
                                           Events = _context.Events
                                                            .Where(e => e.Id == s.Id)
-                                                           .Select(e => new StaffEventViewModel
+                                                           .Select(e => new _EventViewModel
                                                            {
                                                                Id = e.Id,
                                                                Date = e.Date,
@@ -50,13 +50,14 @@ namespace ThAmCo.Events.Controllers
                                                                TypeId = e.TypeId
                                                            })
                                       })
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                      .FirstOrDefaultAsync(m => m.Id == id);
 
             if (staff == null)
             {
                 return NotFound();
             }
 
+            ViewData["StaffName"] = staff.FirstName + " " + staff.Surname;
             return View(staff);
         }
 

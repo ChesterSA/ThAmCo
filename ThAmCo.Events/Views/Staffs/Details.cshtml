@@ -4,88 +4,90 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>@ViewData["StaffName"] Details</h2>
 
-<div>
-    <h4>Staff</h4>
-    <hr />
-    <dl>
-        <dt>
-            @Html.DisplayNameFor(model => model.StaffCode)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.StaffCode)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Surname)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Surname)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstAider)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FirstAider)
-        </dd>
-    </dl>
-</div>
-<div>
-    @if (Model.Events.Any())
-    {
-        <h4>Events</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Id)
-                    </th>
-                    <th>
-                        Title
-                    </th>
-                    <th>
-                        Date
-                    </th>
-                    <th>
-                        TypeId
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Events)
-                {
+<div class="row">
+    <div class="col-md-4">
+        <h4>Staff</h4>
+        <hr />
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StaffCode)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StaffCode)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Surname)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Surname)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.FirstAider)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.FirstAider)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-4">
+        @if (Model.Events.Any())
+        {
+            <h4>Events</h4>
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Title)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Date)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TypeId)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Details", "Details", "Events", new { id = item.Id })
-                        </td>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Id)
+                        </th>
+                        <th>
+                            Title
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            TypeId
+                        </th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p><br/>Not working any events</p>
-    }
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Events)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TypeId)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Details", "Details", "Events", new { id = item.Id })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p><br />Not working any events</p>
+        }
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
