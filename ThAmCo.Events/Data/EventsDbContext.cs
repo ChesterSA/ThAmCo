@@ -102,5 +102,7 @@ namespace ThAmCo.Events.Data
         }
 
         public DbSet<ThAmCo.Events.Models.FoodMenuViewModel> FoodMenuViewModel { get; set; }
+
+        public DbSet<ThAmCo.Events.Models.VenuesViewModel> VenuesViewModel { get; set; }
     }
 }

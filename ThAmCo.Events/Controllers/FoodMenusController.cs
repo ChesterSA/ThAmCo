@@ -24,7 +24,7 @@ namespace ThAmCo.Events.Controllers
         // GET: FoodMenuViewModels
         public async Task<IActionResult> Index()
         {
-            var availableVenues = new List<FoodMenuViewModel>().AsEnumerable();
+            var availableMenus = new List<FoodMenuViewModel>().AsEnumerable();
 
             HttpClient client = getClient("32824");
 
@@ -32,11 +32,11 @@ namespace ThAmCo.Events.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                availableVenues = await response.Content.ReadAsAsync<IEnumerable<FoodMenuViewModel>>();
+                availableMenus = await response.Content.ReadAsAsync<IEnumerable<FoodMenuViewModel>>();
 
-                if (availableVenues.Count() == 0)
+                if (availableMenus.Count() == 0)
                 {
-                    Debug.WriteLine("No available venues");
+                    Debug.WriteLine("No available menus");
                 }
             }
             else
@@ -44,7 +44,7 @@ namespace ThAmCo.Events.Controllers
                 Debug.WriteLine("Recieved a bad response from service");
             }
 
-            return View(availableVenues);
+            return View(availableMenus);
         }
 
         // GET: FoodMenuViewModels/Details/5

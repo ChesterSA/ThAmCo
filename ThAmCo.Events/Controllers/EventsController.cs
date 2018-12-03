@@ -33,7 +33,7 @@ namespace ThAmCo.Events.Controllers
 
             List<EventList> eventlists = new List<EventList>();
 
-            foreach(Event e in events)
+            foreach (Event e in events)
             {
                 EventList el = new EventList();
                 el.Bookings = e.Bookings;
@@ -49,8 +49,6 @@ namespace ThAmCo.Events.Controllers
 
             return View(eventlists);
         }
-
-
 
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
