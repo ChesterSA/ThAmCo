@@ -9,10 +9,17 @@ using ThAmCo.Catering.Data;
 
 namespace ThAmCo.Catering.Controllers
 {
+    /// <summary>
+    /// The controller for the food menus
+    /// Uses Data/FoodMenu
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class FoodMenusController : ControllerBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly CateringDbContext _context;
 
         public FoodMenusController(CateringDbContext context)
