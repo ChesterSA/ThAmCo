@@ -8,36 +8,18 @@ using ThAmCo.Events.Models;
 
 namespace ThAmCo.Events.Controllers
 {
+    /// <summary>
+    /// The Home controller, default webpage for ThAmCo.Events
+    /// </summary>
     public class HomeController : Controller
     {
+        /// <summary>
+        /// The index view
+        /// </summary>
+        /// <returns>The homepage of the site</returns>
         public IActionResult Index()
         {
             return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

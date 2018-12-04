@@ -14,15 +14,29 @@ using ThAmCo.Venues.Models;
 
 namespace ThAmCo.Events.Controllers
 {
+    /// <summary>
+    /// The controller for the events data type
+    /// </summary>
     public class EventsController : Controller
     {
+        /// <summary>
+        /// The dbContext to be used
+        /// </summary>
         private readonly EventsDbContext _context;
 
+        /// <summary>
+        /// Initialises a new controller
+        /// </summary>
+        /// <param name="context">The context to be used by the controller</param>
         public EventsController(EventsDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Gets a view containing the list of all events
+        /// </summary>
+        /// <returns>The index view of all events</returns>
         // GET: Events
         public async Task<IActionResult> Index()
         {
@@ -50,6 +64,12 @@ namespace ThAmCo.Events.Controllers
             return View(eventlists);
         }
 
+        /// <summary>
+        /// Gets the details of one specific Event
+        /// Joins it to the GuestBookings list and Staff List for that Event
+        /// </summary>
+        /// <param name="id">The id of the event whose details are needed</param>
+        /// <returns>A view containing the details of the event</returns>
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -118,12 +138,21 @@ namespace ThAmCo.Events.Controllers
             return View(@event);
         }
 
+        /// <summary>
+        /// Gets the create view for an event
+        /// </summary>
+        /// <returns>The Create view for the event</returns>
         // GET: Events/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        /// <summary>
+        /// Adds a new Event to the dbContext
+        /// </summary>
+        /// <param name="@event">The Customer object to be added</param>
+        /// <returns>The index view if successful, otherwise the Create view</returns>
         // POST: Events/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -141,6 +170,12 @@ namespace ThAmCo.Events.Controllers
             return View(@event);
         }
 
+        /// <summary>
+        /// Returns the edit view for an event data object
+        /// Data fields are initialised to match data
+        /// </summary>
+        /// <param name="id">The id of the event to edit</param>
+        /// <returns>The edit view, fields populated</returns>
         // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -167,6 +202,11 @@ namespace ThAmCo.Events.Controllers
             return View(@eventEdit);
         }
 
+        /// <summary>
+        /// Edits an event in the dbContext
+        /// </summary>
+        /// <param name="eventEdit">The Event object to be edited</param>
+        /// <returns>The index view if successful, otherwise the Edit view</returns>
         // POST: Events/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -208,6 +248,11 @@ namespace ThAmCo.Events.Controllers
             return View(eventEdit);
         }
 
+        /// <summary>
+        /// Gets a delete view for an event
+        /// </summary>
+        /// <param name="id">The id of the event to delete</param>
+        /// <returns>The details view of the event to delete</returns>
         // GET: Events/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -228,6 +273,11 @@ namespace ThAmCo.Events.Controllers
             return View(@event);
         }
 
+        /// <summary>
+        /// Deletes an event from the db Context
+        /// </summary>
+        /// <param name="id">The id of the event to delete</param>
+        /// <returns>The index view</returns>
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -250,6 +300,11 @@ namespace ThAmCo.Events.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Gets the list of available venues from the api
+        /// </summary>
+        /// <param name="eventid">The eventId to check availability for</param>
+        /// <returns>A list of AvailabeVenues</returns>
         public async Task<IActionResult> AvailableVenues(int? eventid)
         {
             if (eventid == null)
@@ -293,6 +348,14 @@ namespace ThAmCo.Events.Controllers
             return View(availableVenues);
         }
 
+        /// <summary>
+        /// Posts a new Reservation to ThAmCo.Venues
+        /// </summary>
+        /// <param name="eventid">the event id to be added</param>
+        /// <param name="venueCode">The code of the venue to be reserved</param>
+        /// <param name="staffid">the id of the staff member linked to the reservation</param>
+        /// <param name="venueCost">the cost of the venue</param>
+        /// <returns>A view displaying the reservation details</returns>
         public async Task<IActionResult> ReserveVenue(int? eventid, string venueCode, string staffid, decimal venueCost)
         {
             if (eventid == null || venueCode == null || staffid == null)
@@ -334,6 +397,11 @@ namespace ThAmCo.Events.Controllers
 
         }
 
+        /// <summary>
+        /// Gets the list of food menus for an event
+        /// </summary>
+        /// <param name="eventid">the event id to use for reserving a venue</param>
+        /// <returns></returns>
         public async Task<IActionResult> AvailableMenus(int? eventid)
         {
             if (eventid == null)
@@ -366,6 +434,12 @@ namespace ThAmCo.Events.Controllers
             return View(availableVenues);
         }
 
+        /// <summary>
+        /// Creates a new Booking in ThAmCo.Catering
+        /// </summary>
+        /// <param name="eventid">the id of the event</param>
+        /// <param name="menuid">the id of the menu</param>
+        /// <returns></returns>
         public async Task<IActionResult> BookMenu(int? eventid, int? menuid)
         {
             if (eventid == null || menuid == null)
@@ -406,6 +480,11 @@ namespace ThAmCo.Events.Controllers
 
         }
 
+        /// <summary>
+        /// Deletes a booking from ThAmCo.Catering
+        /// </summary>
+        /// <param name="eventid">the id of the menu to delete</param>
+        /// <returns></returns>
         public async Task<IActionResult> CancelMenu(int? eventid)
         {
             if (eventid == null)
@@ -432,6 +511,11 @@ namespace ThAmCo.Events.Controllers
             return client;
         }
 
+        /// <summary>
+        /// Checks if an event exists
+        /// </summary>
+        /// <param name="id">The id of the event to check</param>
+        /// <returns>True if the customer event exists, false if not</returns>
         private bool EventExists(int id)
         {
             return _context.Events.Any(e => e.Id == id);

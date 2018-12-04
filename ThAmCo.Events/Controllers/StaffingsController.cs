@@ -9,15 +9,30 @@ using ThAmCo.Events.Data;
 
 namespace ThAmCo.Events.Controllers
 {
+    /// <summary>
+    /// The controller for the Staffings data type
+    /// </summary>
     public class StaffingsController : Controller
     {
+        /// <summary>
+        /// The dbContext to be used
+        /// </summary>
         private readonly EventsDbContext _context;
 
+        /// <summary>
+        /// Initialises a new controller
+        /// </summary>
+        /// <param name="context">The context to be used by the controller</param>
         public StaffingsController(EventsDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Creates a new staffing to add to a specified event
+        /// </summary>
+        /// <param name="eventId">the event id to add to the staffing</param>
+        /// <returns>A view containing a list of valid staff to add</returns>
         // GET: Staffings/CreateFromEvent
         public IActionResult CreateFromEvent([FromQuery] int? eventId)
         {
@@ -47,6 +62,11 @@ namespace ThAmCo.Events.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Creates a staffing assigning an event to a staff
+        /// </summary>
+        /// <param name="customerId">the id of the staff to create an event</param>
+        /// <returns>A view containing a list of valid events to add</returns>
         // GET: Staffings/Create
         public IActionResult CreateFromStaff([FromQuery] int? staffId)
         {
@@ -76,9 +96,12 @@ namespace ThAmCo.Events.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Adds a new Staffing to the dbContext
+        /// </summary>
+        /// <param name="staffing">The Staffing object to be added</param>
+        /// <returns>The index view if successful, otherwise the Create view</returns>
         // POST: Staffings/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("StaffId,EventId")] Staffing staffing)
@@ -111,6 +134,11 @@ namespace ThAmCo.Events.Controllers
             return View(staffing);
         }
 
+        /// <summary>
+        /// Gets a delete view for a staffing
+        /// </summary>
+        /// <param name="id">The id of the staffing to delete</param>
+        /// <returns>The details view of the staffing to delete</returns>
         // GET: Staffings/Delete/5
         public IActionResult Delete([FromQuery] int? eventId)
         {
@@ -139,6 +167,10 @@ namespace ThAmCo.Events.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Deletes a staffing from the db Context
+        /// </summary>
+        /// <param name="id">The id of the staffing to delete</param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete([Bind("StaffId,EventId")] Staffing staffing)
@@ -153,6 +185,11 @@ namespace ThAmCo.Events.Controllers
             return RedirectToAction("Index", "Events");
         }
 
+        /// <summary>
+        /// Checks if a staffing exists
+        /// </summary>
+        /// <param name="id">The id of the staffing to check</param>
+        /// <returns>True if the staffing exists, false if not</returns>
         private bool StaffingExists(int id)
         {
             return _context.Workers.Any(e => e.StaffId == id);

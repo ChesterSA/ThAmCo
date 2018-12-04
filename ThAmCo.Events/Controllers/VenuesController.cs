@@ -13,15 +13,29 @@ using ThAmCo.Venues.Data;
 
 namespace ThAmCo.Events.Controllers
 {
+    /// <summary>
+    /// The controller for the FoodMenus data type
+    /// </summary>
     public class VenuesController : Controller
     {
+        /// <summary>
+        /// The dbContext to be used
+        /// </summary>
         private readonly EventsDbContext _context;
 
+        /// <summary>
+        /// Initialises the controller and the dbContext
+        /// </summary>
         public VenuesController(EventsDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Gets a view containing the list of all menus
+        /// Pushes a get statement to the Menus api
+        /// </summary>
+        /// <returns>The index view of all menus</returns>
         // GET: VenuesViewModels
         public async Task<IActionResult> Index(string eventType, DateTime beginDate, DateTime endDate)
         {
@@ -66,6 +80,13 @@ namespace ThAmCo.Events.Controllers
             return View(availableVenues);
         }
 
+        /// <summary>
+        /// Creates a new event for the selected Availalibity
+        /// </summary>
+        /// <param name="venueCode">the code of the venue to be selected</param>
+        /// <param name="eventType">the event type</param>
+        /// <param name="date">The date of the event</param>
+        /// <returns>The create view initialised with values</returns>
         public IActionResult CreateEvent(string venueCode, string eventType, DateTime date)
         {
             if (venueCode == null || eventType == null)
@@ -87,9 +108,12 @@ namespace ThAmCo.Events.Controllers
             return View(@event);
         }
 
+        /// <summary>
+        /// Adds an event to the db context
+        /// </summary>
+        /// <param name="event">the event to added</param>
+        /// <returns></returns>
         // POST: Events/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEvent([Bind("Id,Title,Date,Duration,TypeId,Venue")] VenueEventViewModel @event)
@@ -114,6 +138,11 @@ namespace ThAmCo.Events.Controllers
             return View(@event);
         }
 
+        /// <summary>
+        /// Connects an HttpClient to a selected port
+        /// </summary>
+        /// <param name="port">The port number to connect to</param>
+        /// <returns>An HttpClient connected to the port</returns>
         private HttpClient getClient(string port)
         {
             HttpClient client = new HttpClient();
@@ -122,6 +151,7 @@ namespace ThAmCo.Events.Controllers
 
             return client;
         }
+
 
         private bool VenuesViewModelExists(string id)
         {

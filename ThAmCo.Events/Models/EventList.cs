@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using ThAmCo.Venues.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using ThAmCo.Events.Data;
 
-namespace ThAmCo.Events.Data
+namespace ThAmCo.Events.Models
 {
     /// <summary>
-    /// The data type for each event
+    /// Model used in the event index view
     /// </summary>
-    public class Event
+    public class EventList
     {
         /// <summary>
-        /// The unique Id of each event
+        /// The id of the event
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Checks whether an event is active, used as a soft delete
+        /// A boolean indicating whether the event is active, used for soft delete functionality
         /// </summary>
         public bool IsActive { get; set; }
 
@@ -27,51 +29,30 @@ namespace ThAmCo.Events.Data
         public string Title { get; set; }
 
         /// <summary>
-        /// The Date of the event
+        /// The date the event will occur on
         /// </summary>
         [Required]
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// How long the event will take
+        /// The duration of the event
         /// </summary>
         public TimeSpan? Duration { get; set; }
 
         /// <summary>
-        /// The TypeId of the event
+        /// An identifier describing the event type
         /// </summary>
         [Required, MaxLength(3), MinLength(3)]
         public string TypeId { get; set; }
 
         /// <summary>
-        /// The code of the venue the event is booked at
-        /// </summary>
-        public string Venue { get; set; }
-
-        /// <summary>
-        /// The list of booking on the event
+        /// The bookings linked to this event
         /// </summary>
         public List<GuestBooking> Bookings { get; set; }
 
         /// <summary>
-        /// The list of staff for the event
+        /// The staffings linked to this event
         /// </summary>
         public List<Staffing> Staff { get; set; }
-
-        /// <summary>
-        /// The Food Menu booked to the event
-        /// </summary>
-        public string Menu { get; set; }
-
-        /// <summary>
-        /// The cost of the menu
-        /// </summary>
-        public decimal FoodCost { get; set; }
-
-        /// <summary>
-        /// The cost of the venue
-        /// </summary>
-        public decimal VenueCost { get; set; }
-
     }
 }

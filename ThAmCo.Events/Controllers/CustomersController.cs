@@ -10,21 +10,41 @@ using ThAmCo.Events.Models;
 
 namespace ThAmCo.Events.Controllers
 {
+    /// <summary>
+    /// The controller for the customers data type
+    /// </summary>
     public class CustomersController : Controller
     {
+        /// <summary>
+        /// The dbContext to be used
+        /// </summary>
         private readonly EventsDbContext _context;
 
+        /// <summary>
+        /// Initialises a new controller
+        /// </summary>
+        /// <param name="context">The context to be used by the controller</param>
         public CustomersController(EventsDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Gets a view containing the list of all customers
+        /// </summary>
+        /// <returns>The index view of all customers</returns>
         // GET: Customers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Customers.ToListAsync());
         }
 
+        /// <summary>
+        /// Gets the details of one specific Customer
+        /// Joins it to the GuestBookings list for that Customer
+        /// </summary>
+        /// <param name="id">The id of the customer whose details are needed</param>
+        /// <returns>A view containing the details of the Customer</returns>
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -62,15 +82,22 @@ namespace ThAmCo.Events.Controllers
             return View(customer);
         }
 
+        /// <summary>
+        /// Gets the create view for a customer
+        /// </summary>
+        /// <returns>The Create view for the customer</returns>
         // GET: Customers/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        /// <summary>
+        /// Adds a new Customer to the dbContext
+        /// </summary>
+        /// <param name="customer">The Customer object to be added</param>
+        /// <returns>The index view if successful, otherwise the Create view</returns>
         // POST: Customers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Surname,FirstName,Email")] Customer customer)
@@ -84,6 +111,12 @@ namespace ThAmCo.Events.Controllers
             return View(customer);
         }
 
+        /// <summary>
+        /// Returns the edit view for a customer data object
+        /// Data fields are initialised to match data
+        /// </summary>
+        /// <param name="id">The id of the customer to edit</param>
+        /// <returns>The edit view, fields populated</returns>
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -100,9 +133,13 @@ namespace ThAmCo.Events.Controllers
             return View(customer);
         }
 
+        /// <summary>
+        /// Edits a Customer in the dbContext
+        /// </summary>
+        /// /// <param name="id">The id of the Customer object to be edited</param>
+        /// <param name="customer">The Customer object to be edited</param>
+        /// <returns>The index view if successful, otherwise the Edit view</returns>
         // POST: Customers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Surname,FirstName,Email")] Customer customer)
@@ -135,6 +172,11 @@ namespace ThAmCo.Events.Controllers
             return View(customer);
         }
 
+        /// <summary>
+        /// Gets a delete view for a customer
+        /// </summary>
+        /// <param name="id">The id of the customer to delete</param>
+        /// <returns>The details view of the customer to delete</returns>
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -153,6 +195,11 @@ namespace ThAmCo.Events.Controllers
             return View(customer);
         }
 
+        /// <summary>
+        /// Deletes a customer from the db Context
+        /// </summary>
+        /// <param name="id">The id of the customer to delete</param>
+        /// <returns>The index view</returns>
         // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -164,6 +211,11 @@ namespace ThAmCo.Events.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Checks if a customer exists
+        /// </summary>
+        /// <param name="id">The id of the customer to check</param>
+        /// <returns>True if the customer exists, false if not</returns>
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(e => e.Id == id);

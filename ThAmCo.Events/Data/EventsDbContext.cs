@@ -6,27 +6,75 @@ using ThAmCo.Events.Models;
 
 namespace ThAmCo.Events.Data
 {
+    /// <summary>
+    /// The Db Context for the event
+    /// </summary>
     public class EventsDbContext : DbContext
     {
+        /// <summary>
+        /// The list of customers in the database
+        /// </summary>
         public DbSet<Customer> Customers { get; set; }
+
+        /// <summary>
+        /// The list of Events in the database
+        /// </summary>
         public DbSet<Event> Events { get; set; }
+
+        /// <summary>
+        /// The list of Guests in the database
+        /// </summary>
         public DbSet<GuestBooking> Guests { get; set; }
+
+        /// <summary>
+        /// The list of Staffings in the database
+        /// </summary>
         public DbSet<Staffing> Workers { get; set; }
+
+        /// <summary>
+        /// The list of Staff in the database
+        /// </summary>
         public DbSet<Staff> Staff { get; set; }
 
+        /// <summary>
+        /// The list of FoodMenuViewModels in the database
+        /// </summary>
+        public DbSet<FoodMenuViewModel> FoodMenuViewModel { get; set; }
+
+        /// <summary>
+        /// The list of VenuesViewModels in the database
+        /// </summary>
+        public DbSet<VenuesViewModel> VenuesViewModel { get; set; }
+
+        /// <summary>
+        /// The host environment for the database
+        /// </summary>
         private IHostingEnvironment HostEnv { get; }
 
+        /// <summary>
+        /// Creates a new DbContext
+        /// </summary>
+        /// <param name="options">The DbContextOptions for the database</param>
+        /// <param name="env">The host environment of the database</param>
         public EventsDbContext(DbContextOptions<EventsDbContext> options,
                                IHostingEnvironment env) : base(options)
         {
             HostEnv = env;
         }
 
+        /// <summary>
+        /// Sets up the database as it is being configured
+        /// </summary>
+        /// <param name="builder">The builder used by the DbContext</param>
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
             base.OnConfiguring(builder);
         }
 
+        /// <summary>
+        /// Called when the database is first initialised, sets default values
+        /// </summary>
+        /// <param name="builder">the bulder to be used</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -100,9 +148,5 @@ namespace ThAmCo.Events.Data
                 );
             }
         }
-
-        public DbSet<ThAmCo.Events.Models.FoodMenuViewModel> FoodMenuViewModel { get; set; }
-
-        public DbSet<ThAmCo.Events.Models.VenuesViewModel> VenuesViewModel { get; set; }
     }
 }

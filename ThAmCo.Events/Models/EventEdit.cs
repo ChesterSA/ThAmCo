@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using ThAmCo.Events.Data;
 
 namespace ThAmCo.Events.Models
 {
     /// <summary>
-    /// Model used for creating an event from a venue
+    /// Model used for the Event Edit view
     /// </summary>
-    public class VenueEventViewModel
+    public class EventEdit
     {
         /// <summary>
-        /// The unique id of the event
+        /// The Id of the event
         /// </summary>
         public int Id { get; set; }
 
@@ -22,26 +21,24 @@ namespace ThAmCo.Events.Models
         public string Title { get; set; }
 
         /// <summary>
-        /// The date of the event
-        /// Handled as a string as passing a date to the view seemed impossible
-        /// Tyrone has tried to figure this out and seriously there's no other solution
+        /// The Date the event will occur on
         /// </summary>
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
 
         /// <summary>
-        /// How long the event will last
+        /// The duration of the event
         /// </summary>
         public TimeSpan? Duration { get; set; }
 
         /// <summary>
-        /// The Type id of the event
+        /// The identifier of the event Type
         /// </summary>
         [MaxLength(3), MinLength(3)]
         public string TypeId { get; set; }
 
         /// <summary>
-        /// The venue code of the venue the event is booked on
+        /// A list of bookings for the event
         /// </summary>
-        public string Venue { get; set; }
+        public List<GuestBooking> Bookings { get; set; }
     }
 }
