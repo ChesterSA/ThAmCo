@@ -41,7 +41,9 @@ namespace ThAmCo.Events.Controllers
         {
             eventType = eventType ?? "WED";
 
-             DateTime empty = new DateTime();
+            Debug.WriteLine(endDate);
+
+            DateTime empty = new DateTime();
             beginDate = (beginDate == empty) ? DateTime.MinValue : beginDate;
             endDate = (endDate == empty) ? DateTime.MaxValue : endDate;
 

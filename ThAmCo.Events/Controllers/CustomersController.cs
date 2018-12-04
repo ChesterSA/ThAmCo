@@ -60,14 +60,14 @@ namespace ThAmCo.Events.Controllers
                                             FirstName = c.FirstName,
                                             LastName = c.Surname,
                                             Email = c.Email,
-                                            Events = _context.Events
-                                                             .Where(e => e.Id == c.Id)
+                                            Events = _context.Guests
+                                                             .Where(g => g.CustomerId == c.Id)
                                                              .Select(e => new _EventViewModel
                                                              {
-                                                                Id = e.Id,
-                                                                Date = e.Date,
-                                                                Title = e.Title,
-                                                                TypeId = e.TypeId
+                                                                Id = e.Event.Id,
+                                                                Date = e.Event.Date,
+                                                                Title = e.Event.Title,
+                                                                TypeId = e.Event.TypeId
                                                              })
                                          })
                                          .FirstOrDefaultAsync(m => m.Id == id);

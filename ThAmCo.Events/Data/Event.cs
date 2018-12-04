@@ -30,6 +30,7 @@ namespace ThAmCo.Events.Data
         /// The Date of the event
         /// </summary>
         [Required]
+        [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
         /// <summary>

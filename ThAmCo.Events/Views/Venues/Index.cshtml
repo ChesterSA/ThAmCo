@@ -7,7 +7,7 @@
 <h2>Index</h2>
 @using (Html.BeginForm("Index", "Venues", FormMethod.Get))
 {
-    @Html.DropDownList("EventType", (SelectList)ViewData["EventTypes"])
+    @Html.DropDownList("eventType", (SelectList)ViewData["EventTypes"])
     @Html.Editor("beginDate");
     @Html.Editor("endDate");
 
