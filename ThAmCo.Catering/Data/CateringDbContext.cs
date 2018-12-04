@@ -4,23 +4,50 @@ using Microsoft.EntityFrameworkCore;
 using ThAmCo.Catering.Data;
 namespace ThAmCo.Catering.Data
 {
+    /// <summary>
+    /// The link to the database for the ThAmCo.Catering project
+    /// </summary>
     public class CateringDbContext : DbContext
     {
+        /// <summary>
+        /// The list of menus
+        /// </summary>
         public DbSet<FoodMenu> Menus { get; set; }
 
+        /// <summary>
+        /// The list of bookings
+        /// </summary>
+        public DbSet<Booking> Booking { get; set; }
+
+        /// <summary>
+        /// The host environment for the database
+        /// </summary>
         private IHostingEnvironment HostEnv { get; }
 
+        /// <summary>
+        /// Creates a new DbContext
+        /// </summary>
+        /// <param name="options">The DbContextOptions for the database</param>
+        /// <param name="env">The host environment of the database</param>
         public CateringDbContext(DbContextOptions<CateringDbContext> options,
                                IHostingEnvironment env) : base(options)
         {
             HostEnv = env;
         }
 
+        /// <summary>
+        /// Sets up the database as it is being configured
+        /// </summary>
+        /// <param name="builder">The builder used by the DbContext</param>
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
             base.OnConfiguring(builder);
         }
 
+        /// <summary>
+        /// Called when the database is first initialised, sets default values
+        /// </summary>
+        /// <param name="builder">the bulder to be used</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -54,6 +81,6 @@ namespace ThAmCo.Catering.Data
 
         }
 
-        public DbSet<ThAmCo.Catering.Data.Booking> Booking { get; set; }
+        
     }
 }

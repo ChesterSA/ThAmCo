@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ThAmCo.Catering.Controllers
 {
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase

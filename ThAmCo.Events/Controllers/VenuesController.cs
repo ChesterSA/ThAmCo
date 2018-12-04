@@ -25,8 +25,9 @@ namespace ThAmCo.Events.Controllers
         // GET: VenuesViewModels
         public async Task<IActionResult> Index(string eventType, DateTime beginDate, DateTime endDate)
         {
-            DateTime empty = new DateTime();
             eventType = eventType ?? "WED";
+
+             DateTime empty = new DateTime();
             beginDate = (beginDate == empty) ? DateTime.MinValue : beginDate;
             endDate = (endDate == empty) ? DateTime.MaxValue : endDate;
 

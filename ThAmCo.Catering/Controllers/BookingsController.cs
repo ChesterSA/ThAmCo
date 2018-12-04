@@ -47,7 +47,7 @@ namespace ThAmCo.Catering.Controllers
         /// Returns a booking filtered by the id
         /// </summary>
         /// <param name="id">The event id of the booking to find</param>
-        /// <returns></returns>
+        /// <returns>An error if command is unsuccessful</returns>
         // GET: api/Bookings/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBooking([FromRoute] int id)
@@ -74,7 +74,7 @@ namespace ThAmCo.Catering.Controllers
         /// </summary>
         /// <param name="id">The id of the booking to be updated</param>
         /// <param name="booking">the booking to be added instead</param>
-        /// <returns></returns>
+        /// <returns>An error if unsuccessful</returns>
         // PUT: api/Bookings/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBooking([FromRoute] int id, [FromBody] Booking booking)
@@ -114,7 +114,7 @@ namespace ThAmCo.Catering.Controllers
         /// Adds a new booking to the database
         /// </summary>
         /// <param name="booking">the booking to be added</param>
-        /// <returns></returns>
+        /// <returns>An error if unsuccessful</returns>
         // POST: api/Bookings
         [HttpPost]
         public async Task<IActionResult> PostBooking([FromBody] Booking booking)
@@ -148,7 +148,7 @@ namespace ThAmCo.Catering.Controllers
         /// Deletes a booking from the database
         /// </summary>
         /// <param name="id">the id of the event booking to be deleted</param>
-        /// <returns></returns>
+        /// <returns>An error if unsuccesful</returns>
         // DELETE: api/Bookings/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking([FromRoute] int id)
@@ -170,6 +170,11 @@ namespace ThAmCo.Catering.Controllers
             return Ok(booking);
         }
 
+        /// <summary>
+        /// Checks if a booking already exists
+        /// </summary>
+        /// <param name="id">The id to check against the database</param>
+        /// <returns>True if the booking exists, false if not</returns>
         private bool BookingExists(int id)
         {
             return _context.Booking.Any(e => e.MenuId == id);

@@ -13,8 +13,15 @@ using ThAmCo.Catering.Data;
 
 namespace ThAmCo.Catering
 {
+    /// <summary>
+    /// The class used to drive the program
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Initialises the database and other project values
+        /// </summary>
+        /// <param name="args">Command line arguments</param>
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();
@@ -34,6 +41,11 @@ namespace ThAmCo.Catering
             host.Run();
         }
 
+        /// <summary>
+        /// Creates a web host builder for the project
+        /// </summary>
+        /// <param name="args">Command line arguments</param>
+        /// <returns>A new Web Host Builder</returns>
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();

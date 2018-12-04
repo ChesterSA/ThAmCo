@@ -15,16 +15,29 @@ using Microsoft.AspNetCore.Http;
 
 namespace ThAmCo.Catering
 {
+    /// <summary>
+    /// Called on startup
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Configures the project
+        /// </summary>
+        /// <param name="configuration">The details to be used in the configuration</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// The configuration value
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services">The services to be added to the container</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
@@ -44,7 +57,12 @@ namespace ThAmCo.Catering
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">The application to use</param>
+        /// <param name="env">The hosting environment to use</param>
+        // 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
