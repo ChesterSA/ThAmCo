@@ -5,7 +5,14 @@
 }
 
 <h2>Index</h2>
+@using (Html.BeginForm("Index", "Venues", FormMethod.Get))
+{
+    @Html.DropDownList("EventType", (SelectList)ViewData["EventTypes"])
+    @Html.Editor("beginDate");
+    @Html.Editor("endDate");
 
+    <input type="submit" name="btnSubmit" />
+}
 <table class="table">
     <thead>
         <tr>
@@ -28,27 +35,28 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Capacity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CostPerHour)
-            </td>
-            <td>
-                <a asp-action="CreateEvent" asp-route-venueCode="@item.Code" asp-route-eventType ="@ViewData["EventType"]" asp-route-date ="@item.Date.ToString("yyyy/MM/dd")">Create Event</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Capacity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CostPerHour)
+                </td>
+                <td>
+                    <a asp-action="CreateEvent" asp-route-venueCode="@item.Code" asp-route-eventType="@ViewData["EventType"]" asp-route-date="@item.Date.ToString("yyyy/MM/dd")">Create Event</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

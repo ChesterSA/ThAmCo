@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThAmCo.Events.Data;
 using ThAmCo.Events.Models;
+using ThAmCo.Venues.Data;
 
 namespace ThAmCo.Events.Controllers
 {
@@ -24,6 +25,14 @@ namespace ThAmCo.Events.Controllers
         // GET: VenuesViewModels
         public async Task<IActionResult> Index(string eventType, DateTime beginDate, DateTime endDate)
         {
+            if (eventType == null)
+            {
+                eventType = "WED";
+            }
+            eventType = (eventType == null) ? "WED" : eventType;
+            beginDate = (beginDate == null) ? DateTime.MinValue : beginDate;
+            endDate = (endDate == null) ? DateTime.MaxValue : endDate;
+
             var availableVenues = new List<AvailableVenuesDto>().AsEnumerable();
 
             HttpClient client = getClient("23652");
@@ -46,6 +55,10 @@ namespace ThAmCo.Events.Controllers
                 Debug.WriteLine("Recieved a bad response from service");
             }
 
+            var eventTypesResponse = await client.GetAsync("api/EventTypes");
+            var eventTypes = await eventTypesResponse.Content.ReadAsAsync<IEnumerable<EventType>>();
+            ViewData["EventTypes"] = new SelectList(eventTypes, "Id", "Title");
+
             ViewData["EventType"] = eventType;
 
             return View(availableVenues);
@@ -58,12 +71,16 @@ namespace ThAmCo.Events.Controllers
                 return NotFound();
             }
 
-            Event @event = new Event
+            Debug.WriteLine(date);
+
+            var @event = new VenueEventViewModel
             {
                 Venue = venueCode,
                 TypeId = eventType,
-                Date = date
+                Date = date.ToString("yyyy-MM-dd")
             };
+
+            Debug.WriteLine(@event.Date);
 
             return View(@event);
         }
@@ -73,12 +90,22 @@ namespace ThAmCo.Events.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateEvent([Bind("Id,Title,Date,Duration,TypeId,Venue")] Event @event)
+        public async Task<IActionResult> CreateEvent([Bind("Id,Title,Date,Duration,TypeId,Venue")] VenueEventViewModel @event)
         {
+
             if (ModelState.IsValid)
             {
-                @event.IsActive = true;
-                _context.Add(@event);
+                var newEvent = new Event
+                {
+                    Id = @event.Id,
+                    Title = @event.Title,
+                    Date = DateTime.Parse(@event.Date),
+                    Duration = @event.Duration,
+                    TypeId = @event.TypeId,
+                    Venue = @event.Venue
+                };
+                newEvent.IsActive = true;
+                _context.Add(newEvent);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), "Events");
             }

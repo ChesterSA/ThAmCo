@@ -1,16 +1,17 @@
-﻿@model ThAmCo.Events.Data.Event
+﻿@model ThAmCo.Events.Models.VenueEventViewModel
 
 @{
     ViewData["Title"] = "CreateEvent";
 }
 
-<h2>CreateEvent</h2>
+<h2>Create Event</h2>
 
 <h4>Event</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="CreateEvent">
+           
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
@@ -34,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Venue" class="control-label"></label>
-                <input asp-for="Venue" class="form-control" readonly="readonly"/>
+                <input asp-for="Venue" class="form-control" readonly="readonly" />
                 <span asp-validation-for="Venue" class="text-danger"></span>
             </div>
             <div class="form-group">
