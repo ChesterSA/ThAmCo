@@ -25,17 +25,18 @@ namespace ThAmCo.Events.Controllers
         // GET: VenuesViewModels
         public async Task<IActionResult> Index(string eventType, DateTime beginDate, DateTime endDate)
         {
-            if (eventType == null)
-            {
-                eventType = "WED";
-            }
-            eventType = (eventType == null) ? "WED" : eventType;
-            beginDate = (beginDate == null) ? DateTime.MinValue : beginDate;
-            endDate = (endDate == null) ? DateTime.MaxValue : endDate;
+            DateTime empty = new DateTime();
+            eventType = eventType ?? "WED";
+            beginDate = (beginDate == empty) ? DateTime.MinValue : beginDate;
+            endDate = (endDate == empty) ? DateTime.MaxValue : endDate;
 
             var availableVenues = new List<AvailableVenuesDto>().AsEnumerable();
 
             HttpClient client = getClient("23652");
+
+            Debug.WriteLine(eventType);
+            Debug.WriteLine(beginDate);
+            Debug.WriteLine(endDate);
 
             HttpResponseMessage response = await client.GetAsync("api/Availability?eventType=" + eventType
                 + "&beginDate=" + beginDate.ToString("yyyy/MM/dd")
@@ -57,8 +58,8 @@ namespace ThAmCo.Events.Controllers
 
             var eventTypesResponse = await client.GetAsync("api/EventTypes");
             var eventTypes = await eventTypesResponse.Content.ReadAsAsync<IEnumerable<EventType>>();
-            ViewData["EventTypes"] = new SelectList(eventTypes, "Id", "Title");
 
+            ViewData["EventTypes"] = new SelectList(eventTypes, "Id", "Title");
             ViewData["EventType"] = eventType;
 
             return View(availableVenues);
