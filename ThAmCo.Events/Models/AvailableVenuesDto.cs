@@ -46,5 +46,7 @@ namespace ThAmCo.Events.Models
         /// </summary>
         [Range(0.0, Double.MaxValue)]
         public double CostPerHour { get; set; }
+
+        public string StaffCode { get; set; }
     }
 }

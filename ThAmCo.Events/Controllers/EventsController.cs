@@ -342,6 +342,10 @@ namespace ThAmCo.Events.Controllers
                 Debug.WriteLine("Recieved a bad response from service");
             }
 
+            var staff = await _context.Staff.ToListAsync();
+
+            ViewData["VenueList"] = new SelectList(availableVenues, "Code", "Name");
+            ViewData["StaffList"] = new SelectList(staff, "StaffCode", "StaffCode");
             ViewData["EventTitle"] = curEvent.Title;
             ViewData["EventId"] = curEvent.Id;
 
@@ -351,20 +355,28 @@ namespace ThAmCo.Events.Controllers
         /// <summary>
         /// Posts a new Reservation to ThAmCo.Venues
         /// </summary>
-        /// <param name="eventid">the event id to be added</param>
+        /// <param name="eventId">the event id to be added</param>
         /// <param name="venueCode">The code of the venue to be reserved</param>
         /// <param name="staffid">the id of the staff member linked to the reservation</param>
-        /// <param name="venueCost">the cost of the venue</param>
         /// <returns>A view displaying the reservation details</returns>
-        public async Task<IActionResult> ReserveVenue(int? eventid, string venueCode, string staffid, decimal venueCost)
+        public async Task<IActionResult> ReserveVenue(int? eventId, string venueCode, string staffId)
         {
-            if (eventid == null || venueCode == null || staffid == null)
+            if (eventId == null || venueCode == null || staffId == null)
             {
                 return BadRequest();
             }
 
-            var @event = await _context.Events.FindAsync(eventid);
+            HttpClient client = getClient("23652");
+
+            var @event = await _context.Events.FindAsync(eventId);
             @event.Venue = venueCode;
+
+            HttpResponseMessage getAvailability = await client.GetAsync("api/Availability?eventType=" + @event.TypeId
+                + "&beginDate=" + @event.Date.ToString("yyyy/MM/dd")
+                + "&endDate=" + @event.Date.ToString("yyyy/MM/dd"));
+
+            var availability = await getAvailability.Content.ReadAsAsync<IEnumerable<AvailableVenuesDto>>();
+            decimal venueCost = (decimal)availability.FirstOrDefault().CostPerHour;
             @event.VenueCost = venueCost * @event.Duration.Value.Hours;
 
             _context.Update(@event);
@@ -374,13 +386,12 @@ namespace ThAmCo.Events.Controllers
 
             ReservationPostDto reservation = new ReservationPostDto();
             reservation.EventDate = eventDate;
-            reservation.StaffId = staffid;
+            reservation.StaffId = staffId;
             reservation.VenueCode = venueCode;
 
-            HttpClient client = getClient("23652");
+            
             string reference = venueCode + eventDate.ToString("yyyyMMdd");
             HttpResponseMessage delete = await client.DeleteAsync("api/reservations/" + reference);
-
             HttpResponseMessage post = await client.PostAsJsonAsync("api/reservations", reservation);
 
             if (post.IsSuccessStatusCode)
@@ -392,7 +403,7 @@ namespace ThAmCo.Events.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(AvailableVenues), eventid);
+                return RedirectToAction(nameof(AvailableVenues), eventId);
             }
 
         }

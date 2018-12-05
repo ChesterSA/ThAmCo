@@ -78,10 +78,10 @@ namespace ThAmCo.Events.Controllers
             ViewData["StaffId"] = new SelectList(_context.Staff, "Id", "StaffCode", staffId);
 
             var events = _context.Events.ToList();
-            var currentGuests = _context.Workers
-                                        .Where(g => g.StaffId == staffId)
-                                        .ToList();
-            events.RemoveAll(c => currentGuests.Any(g => g.EventId == c.Id));
+            var currentStaff = _context.Workers
+                                       .Where(w => w.StaffId == staffId)
+                                       .ToList();
+            events.RemoveAll(e => currentStaff.Any(w => w.EventId == e.Id));
 
             ViewData["EventId"] = new SelectList(events, "Id", "Title");
 
