@@ -9,7 +9,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// Model used for creating an event from a venue
     /// </summary>
-    public class VenueEventViewModel
+    public class VenueEvent
     {
         /// <summary>
         /// The unique id of the event

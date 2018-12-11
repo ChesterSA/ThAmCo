@@ -10,7 +10,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// Data type used by the Event Details view
     /// </summary>
-    public class EventDetailsViewModel
+    public class EventDetails
     {
         /// <summary>
         /// The unique id of the event
@@ -91,11 +91,11 @@ namespace ThAmCo.Events.Models
         /// <summary>
         /// List of guest who are assigned to the event
         /// </summary>
-        public IEnumerable<EventGuestViewModel> Guests { get; set; } 
+        public IEnumerable<EventGuest> Guests { get; set; } 
 
         /// <summary>
         /// List of staff who are assigned to the event
         /// </summary>
-        public IEnumerable<EventStaffViewModel> Staff { get; set; }
+        public IEnumerable<EventStaff> Staff { get; set; }
     }
 }

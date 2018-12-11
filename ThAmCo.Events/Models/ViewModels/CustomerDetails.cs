@@ -9,7 +9,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// Data type used for the customer details view
     /// </summary>
-    public class CustomerDetailsViewModel
+    public class CustomerDetails
     {
         /// <summary>
         /// The unique id of the customer
@@ -38,6 +38,6 @@ namespace ThAmCo.Events.Models
         /// <summary>
         /// A list of all events the customer has worked
         /// </summary>
-        public IEnumerable<_EventViewModel> Events { get; set; }
+        public IEnumerable<_Event> Events { get; set; }
     }
 }

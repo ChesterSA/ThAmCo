@@ -1,4 +1,4 @@
-﻿@model ThAmCo.Events.Models.EventDetailsViewModel
+﻿@model ThAmCo.Events.Models.EventDetails
 
 @{
     ViewData["Title"] = "Details";
@@ -109,7 +109,7 @@
     </div>
     <div class="col-md-5">
         <h4>Guests</h4>
-        <a asp-controller="GuestBookings" asp-action="CreateFromEvent" asp-route-eventid="@Model.Id">Add Guest</a> | <a asp-controller="GuestBookings" asp-action="Delete" asp-route-eventid="@Model.Id">Remove Guest</a>
+        <a asp-controller="GuestBookings" asp-action="Create" asp-route-eventid="@Model.Id">Add Guest</a> | <a asp-controller="GuestBookings" asp-action="Delete" asp-route-eventid="@Model.Id">Remove Guest</a>
         <hr />
         @if (Model.Guests.Any())
         {
@@ -164,7 +164,7 @@
     </div>
     <div class="col-md-4">
         <h4>Staff</h4>
-        <a asp-controller="Staffings" asp-action="CreateFromEvent" asp-route-eventid="@Model.Id">Add Staff</a> | <a asp-controller="Staffings" asp-action="Delete" asp-route-eventid="@Model.Id">Remove Staff</a>
+        <a asp-controller="Staffings" asp-action="Create" asp-route-eventid="@Model.Id">Add Staff</a> | <a asp-controller="Staffings" asp-action="Delete" asp-route-eventid="@Model.Id">Remove Staff</a>
         <hr />
         @if (Model.Staff.Any())
         {
@@ -210,8 +210,6 @@
         }
     </div>
 </div>
-
-
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

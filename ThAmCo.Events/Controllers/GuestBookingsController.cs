@@ -34,7 +34,7 @@ namespace ThAmCo.Events.Controllers
         /// <param name="eventId">the event id to add to the booking</param>
         /// <returns>A view containing a list of valid customers to add</returns>
         // GET: GuestBookings/CreateFromEvent
-        public IActionResult CreateFromEvent([FromQuery] int? eventId)
+        public IActionResult Create([FromQuery] int? eventId)
         {
             if (eventId == null)
             {
@@ -63,39 +63,7 @@ namespace ThAmCo.Events.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Creates a guest booking assigning an event to a customer
-        /// </summary>
-        /// <param name="customerId">the id of the customer to create an event</param>
-        /// <returns>A view containing a list of valid events to add</returns>
-        // GET: GuestBookings/CreateFromCustomer
-        public IActionResult CreateFromCustomer([FromQuery] int? customerId)
-        {
-            if (customerId == null)
-            {
-                return BadRequest();
-            }
-
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", customerId);
-
-            var events = _context.Events.ToList();
-            var currentGuests = _context.Guests
-                                        .Where(g => g.CustomerId == customerId)
-                                        .ToList();
-            events.RemoveAll(c => currentGuests.Any(g => g.EventId == c.Id));
-
-            ViewData["EventId"] = new SelectList(events, "Id", "Title");
-
-            var customer = _context.Customers.Find(customerId);
-            if (customer == null)
-            {
-                return BadRequest();
-            }
-
-            ViewData["CustomerName"] = customer.FirstName + " " + customer.Surname;
-
-            return View();
-        }
+        
 
         /// <summary>
         /// Adds a new GuestBooking to the dbContext

@@ -39,12 +39,12 @@ namespace ThAmCo.Events.Data
         /// <summary>
         /// The list of FoodMenuViewModels in the database
         /// </summary>
-        public DbSet<FoodMenuViewModel> FoodMenuViewModel { get; set; }
+        public DbSet<FoodMenu> FoodMenus { get; set; }
 
         /// <summary>
         /// The list of VenuesViewModels in the database
         /// </summary>
-        public DbSet<VenuesViewModel> VenuesViewModel { get; set; }
+        public DbSet<Models.Venues> VenuesViewModel { get; set; }
 
         /// <summary>
         /// The host environment for the database

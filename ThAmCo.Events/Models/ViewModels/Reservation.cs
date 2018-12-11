@@ -7,7 +7,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// The view model used to display reservation details
     /// </summary>
-    public class ReservationViewModel
+    public class Reservation
     {
         /// <summary>
         /// The reference string of the reservation

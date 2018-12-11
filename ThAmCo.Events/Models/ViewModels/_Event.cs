@@ -7,32 +7,32 @@ using System.Threading.Tasks;
 namespace ThAmCo.Events.Models
 {
     /// <summary>
-    /// Model used  for displaying guest details on the event details page
+    /// The partial event view model
+    /// Used for connecting events to Customers and Staff
     /// </summary>
-    public class EventGuestViewModel
+    public class _Event
     {
         /// <summary>
-        /// The unique id of the guest
+        /// The id of the event
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// The guest's name
+        /// The title of the event
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
-        /// The email address of the guest
+        /// The date of the event
         /// </summary>
         [Required]
-        [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        public DateTime Date { get; set; }
 
         /// <summary>
-        /// a boolean indicating whether the guest attended the event
+        /// The type id of the event
         /// </summary>
-        public bool Attended { get; set; }
-
+        [Required, MaxLength(3), MinLength(3)]
+        public string TypeId { get; set; }
     }
 }

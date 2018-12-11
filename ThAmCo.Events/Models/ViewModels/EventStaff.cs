@@ -9,7 +9,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// Model used to add staff details to event details view
     /// </summary>
-    public class EventStaffViewModel
+    public class EventStaff
     {
         /// <summary>
         /// The Unique id of the staff member

@@ -15,13 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Views\GuestBookings\CreateFromCustomer.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Staffings\CreateFromStaff.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Staffings\CreateFromEvent.cshtml">
+    <Content Update="Views\Staffings\Create.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

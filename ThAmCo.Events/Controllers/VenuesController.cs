@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -98,7 +99,7 @@ namespace ThAmCo.Events.Controllers
 
             Debug.WriteLine(date);
 
-            var @event = new VenueEventViewModel
+            var @event = new VenueEvent
             {
                 Venue = venueCode,
                 TypeId = eventType,
@@ -118,7 +119,7 @@ namespace ThAmCo.Events.Controllers
         // POST: Events/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateEvent([Bind("Id,Title,Date,Duration,TypeId,Venue")] VenueEventViewModel @event)
+        public async Task<IActionResult> CreateEvent([Bind("Id,Title,Date,Duration,TypeId,Venue")] VenueEvent @event)
         {
 
             if (ModelState.IsValid)

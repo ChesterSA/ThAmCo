@@ -9,7 +9,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// The model used for the staff details view
     /// </summary>
-    public class StaffDetailsViewModel
+    public class StaffDetails
     {
         /// <summary>
         /// The unique id of the staff member
@@ -42,6 +42,6 @@ namespace ThAmCo.Events.Models
         /// <summary>
         /// The list of events the staff member is working
         /// </summary>
-        public IEnumerable<_EventViewModel> Events { get; set; }
+        public IEnumerable<_Event> Events { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// The model used for the venues index view
     /// </summary>
-    public class VenuesViewModel
+    public class Venues
     {
         /// <summary>
         /// The code of the venue

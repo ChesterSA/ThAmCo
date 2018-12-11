@@ -54,7 +54,7 @@ namespace ThAmCo.Events.Controllers
             }
 
             var staff = await _context.Staff
-                                      .Select( s => new StaffDetailsViewModel
+                                      .Select( s => new StaffDetails
                                       {
                                           Id = s.Id,
                                           FirstName = s.FirstName,
@@ -62,7 +62,7 @@ namespace ThAmCo.Events.Controllers
                                           StaffCode = s.StaffCode,
                                           Events = _context.Events
                                                            .Where(e => e.Id == s.Id)
-                                                           .Select(e => new _EventViewModel
+                                                           .Select(e => new _Event
                                                            {
                                                                Id = e.Id,
                                                                Date = e.Date,

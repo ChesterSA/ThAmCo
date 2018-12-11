@@ -9,7 +9,7 @@ namespace ThAmCo.Events.Models
     /// <summary>
     /// The view model used to show menus in their index
     /// </summary>
-    public class FoodMenuViewModel
+    public class FoodMenu
     {
         /// <summary>
         /// The unique id of the event

@@ -35,10 +35,10 @@ namespace ThAmCo.Events.Controllers
         /// Pushes a get statement to the Menus api
         /// </summary>
         /// <returns>The index view of all menus</returns>
-        // GET: FoodMenuViewModels
+        // GET: FoodMenus
         public async Task<IActionResult> Index()
         {
-            var availableMenus = new List<FoodMenuViewModel>().AsEnumerable();
+            var availableMenus = new List<FoodMenu>().AsEnumerable();
 
             HttpClient client = getClient("32824");
 
@@ -46,7 +46,7 @@ namespace ThAmCo.Events.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                availableMenus = await response.Content.ReadAsAsync<IEnumerable<FoodMenuViewModel>>();
+                availableMenus = await response.Content.ReadAsAsync<IEnumerable<FoodMenu>>();
 
                 if (availableMenus.Count() == 0)
                 {
@@ -67,7 +67,7 @@ namespace ThAmCo.Events.Controllers
         /// </summary>
         /// <param name="id">The id of the menu whose details are needed</param>
         /// <returns>A view containing the details of the menu</returns>
-        // GET: FoodMenuViewModels/Details/5
+        // GET: FoodMenus/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -78,7 +78,7 @@ namespace ThAmCo.Events.Controllers
             HttpClient client = getClient("32824");
 
             HttpResponseMessage response = await client.GetAsync("api/foodmenus/" + id);
-            var menu = await response.Content.ReadAsAsync<FoodMenuViewModel>();
+            var menu = await response.Content.ReadAsAsync<FoodMenu>();
             return View(menu);
         }
 
@@ -86,7 +86,7 @@ namespace ThAmCo.Events.Controllers
         /// Gets the create view for a menu
         /// </summary>
         /// <returns>The Create view for the menu</returns>
-        // GET: FoodMenuViewModels/Create
+        // GET: FoodMenus/Create
         public IActionResult Create()
         {
             return View();
@@ -95,24 +95,24 @@ namespace ThAmCo.Events.Controllers
         /// <summary>
         /// Adds a new menu to the API details
         /// </summary>
-        /// <param name="foodMenuViewModel">The Customer object to be added</param>
+        /// <param name="foodMenu">The Customer object to be added</param>
         /// <returns>The index view if successful, otherwise the Create view</returns>
-        // POST: FoodMenuViewModels/Create
+        // POST: FoodMenus/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Starter,Main,Dessert,Cost")] FoodMenuViewModel foodMenuViewModel)
+        public async Task<IActionResult> Create([Bind("Id,Starter,Main,Dessert,Cost")] FoodMenu foodMenu)
         {
             if (ModelState.IsValid)
             {
                 HttpClient client = getClient("32824");
 
-                HttpResponseMessage post = await client.PostAsJsonAsync("api/foodmenus", foodMenuViewModel);
+                HttpResponseMessage post = await client.PostAsJsonAsync("api/foodmenus", foodMenu);
 
                 return RedirectToAction(nameof(Index));
             }
-            return View(foodMenuViewModel);
+            return View(foodMenu);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace ThAmCo.Events.Controllers
         /// </summary>
         /// <param name="id">The id of the menu to edit</param>
         /// <returns>The edit view, fields populated</returns>
-        // GET: FoodMenuViewModels/Edit/5
+        // GET: FoodMens/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -132,26 +132,26 @@ namespace ThAmCo.Events.Controllers
             HttpClient client = getClient("32824");
             HttpResponseMessage response = await client.GetAsync("api/foodmenus/" + id);
 
-            var foodMenuViewModel = await response.Content.ReadAsAsync<FoodMenuViewModel>();
-            if (foodMenuViewModel == null)
+            var foodMenu = await response.Content.ReadAsAsync<FoodMenu>();
+            if (foodMenu == null)
             {
                 return NotFound();
             }
-            return View(foodMenuViewModel);
+            return View(foodMenu);
         }
 
         /// <summary>
         /// Edits a Menu in the dbContext
         /// </summary>
         /// /// <param name="id">The id of the Menu object to be edited</param>
-        /// <param name="foodMenuViewModel">The Menu object to be edited</param>
+        /// <param name="foodMenu">The Menu object to be edited</param>
         /// <returns>The index view if successful, otherwise the Edit view</returns>
-        // POST: FoodMenuViewModels/Edit/5
+        // POST: FoodMenus/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Starter,Main,Dessert,Cost")] FoodMenuViewModel foodMenuViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Starter,Main,Dessert,Cost")] FoodMenu foodMenu)
         {
-            if (id != foodMenuViewModel.Id)
+            if (id != foodMenu.Id)
             {
                 return NotFound();
             }
@@ -162,12 +162,12 @@ namespace ThAmCo.Events.Controllers
                 {
                     HttpClient client = getClient("32824");
 
-                    HttpResponseMessage response = await client.PutAsJsonAsync("api/foodmenus/" + id, foodMenuViewModel);
+                    HttpResponseMessage response = await client.PutAsJsonAsync("api/foodmenus/" + id, foodMenu);
 
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FoodMenuViewModelExists(foodMenuViewModel.Id))
+                    if (!FoodMenuExists(foodMenu.Id))
                     {
                         return NotFound();
                     }
@@ -178,7 +178,7 @@ namespace ThAmCo.Events.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(foodMenuViewModel);
+            return View(foodMenu);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace ThAmCo.Events.Controllers
         /// </summary>
         /// <param name="id">The id of the menu to delete</param>
         /// <returns>The delete view, fields populated</returns>
-        // GET: FoodMenuViewModels/Delete/5
+        // GET: FoodMenus/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -197,14 +197,14 @@ namespace ThAmCo.Events.Controllers
 
             HttpClient client = getClient("32824");
             HttpResponseMessage response = await client.GetAsync("api/foodmenus/" + id);
-            var foodMenuViewModel = await response.Content.ReadAsAsync<FoodMenuViewModel>();
+            var foodMenu = await response.Content.ReadAsAsync<FoodMenu>();
 
-            if (foodMenuViewModel == null)
+            if (foodMenu == null)
             {
                 return NotFound();
             }
 
-            return View(foodMenuViewModel);
+            return View(foodMenu);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace ThAmCo.Events.Controllers
         /// </summary>
         /// <param name="id">The id of the menu to delete</param>
         /// <returns>The index view</returns>
-        // POST: FoodMenuViewModels/Delete/5
+        // POST: FoodMenus/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -242,9 +242,9 @@ namespace ThAmCo.Events.Controllers
         /// </summary>
         /// <param name="id">The id of the customer to check</param>
         /// <returns>True if the customer exists, false if not</returns>
-        private bool FoodMenuViewModelExists(int id)
+        private bool FoodMenuExists(int id)
         {
-            return _context.FoodMenuViewModel.Any(e => e.Id == id);
+            return _context.FoodMenus.Any(e => e.Id == id);
         }
     }
 }

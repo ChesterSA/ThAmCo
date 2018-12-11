@@ -54,7 +54,7 @@ namespace ThAmCo.Events.Controllers
             }
 
             var customer = await _context.Customers
-                                         .Select(c => new CustomerDetailsViewModel
+                                         .Select(c => new CustomerDetails
                                          {
                                             Id = c.Id,
                                             FirstName = c.FirstName,
@@ -62,7 +62,7 @@ namespace ThAmCo.Events.Controllers
                                             Email = c.Email,
                                             Events = _context.Guests
                                                              .Where(g => g.CustomerId == c.Id)
-                                                             .Select(e => new _EventViewModel
+                                                             .Select(e => new _Event
                                                              {
                                                                 Id = e.Event.Id,
                                                                 Date = e.Event.Date,

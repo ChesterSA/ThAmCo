@@ -33,8 +33,8 @@ namespace ThAmCo.Events.Controllers
         /// </summary>
         /// <param name="eventId">the event id to add to the staffing</param>
         /// <returns>A view containing a list of valid staff to add</returns>
-        // GET: Staffings/CreateFromEvent
-        public IActionResult CreateFromEvent([FromQuery] int? eventId)
+        // GET: Staffings/Create
+        public IActionResult Create([FromQuery] int? eventId)
         {
             if (eventId == null)
             {
@@ -58,40 +58,6 @@ namespace ThAmCo.Events.Controllers
             }
 
             ViewData["EventTitle"] = @event.Title;
-
-            return View();
-        }
-
-        /// <summary>
-        /// Creates a staffing assigning an event to a staff
-        /// </summary>
-        /// <param name="customerId">the id of the staff to create an event</param>
-        /// <returns>A view containing a list of valid events to add</returns>
-        // GET: Staffings/Create
-        public IActionResult CreateFromStaff([FromQuery] int? staffId)
-        {
-            if (staffId == null)
-            {
-                return BadRequest();
-            }
-
-            ViewData["StaffId"] = new SelectList(_context.Staff, "Id", "StaffCode", staffId);
-
-            var events = _context.Events.ToList();
-            var currentStaff = _context.Workers
-                                       .Where(w => w.StaffId == staffId)
-                                       .ToList();
-            events.RemoveAll(e => currentStaff.Any(w => w.EventId == e.Id));
-
-            ViewData["EventId"] = new SelectList(events, "Id", "Title");
-
-            var staffMember = _context.Staff.Find(staffId);
-            if (staffMember == null)
-            {
-                return BadRequest();
-            }
-
-            ViewData["StaffName"] = staffMember.FirstName + " " + staffMember.Surname;
 
             return View();
         }

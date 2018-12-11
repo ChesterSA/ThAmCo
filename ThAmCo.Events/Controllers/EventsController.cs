@@ -79,7 +79,7 @@ namespace ThAmCo.Events.Controllers
             }
 
             var @event = await _context.Events
-                                       .Select(e => new EventDetailsViewModel
+                                       .Select(e => new EventDetails
                                        {
                                            Id = e.Id,
                                            IsActive = e.IsActive,
@@ -95,7 +95,7 @@ namespace ThAmCo.Events.Controllers
                                            
                                            Guests = _context.Guests
                                                             .Where(g => g.EventId == e.Id)
-                                                            .Select(g => new EventGuestViewModel
+                                                            .Select(g => new EventGuest
                                                             {
                                                                 Id = g.Customer.Id,
                                                                 Name = g.Customer.FirstName + " " + g.Customer.Surname,
@@ -104,7 +104,7 @@ namespace ThAmCo.Events.Controllers
                                                             }),
                                            Staff = _context.Workers
                                                            .Where(w => w.EventId == e.Id)
-                                                           .Select(w => new EventStaffViewModel
+                                                           .Select(w => new EventStaff
                                                            {
                                                                Id = w.Staff.Id,
                                                                StaffCode = w.Staff.StaffCode,
@@ -342,10 +342,16 @@ namespace ThAmCo.Events.Controllers
                 Debug.WriteLine("Recieved a bad response from service");
             }
 
-            var staff = await _context.Staff.ToListAsync();
+
+            var staff = await _context.Staff.Select(s => new StaffList
+            {
+                Id = s.Id,
+                FullName = s.FirstName + " " + s.Surname,
+                StaffCode = s.StaffCode
+            }).ToListAsync();
 
             ViewData["VenueList"] = new SelectList(availableVenues, "Code", "Name");
-            ViewData["StaffList"] = new SelectList(staff, "StaffCode", "StaffCode");
+            ViewData["StaffList"] = new SelectList(staff, "StaffCode", "FullName");
             ViewData["EventTitle"] = curEvent.Title;
             ViewData["EventId"] = curEvent.Id;
 
@@ -369,7 +375,10 @@ namespace ThAmCo.Events.Controllers
             HttpClient client = getClient("23652");
 
             var @event = await _context.Events.FindAsync(eventId);
-            @event.Venue = venueCode;
+
+            HttpResponseMessage getVenueName = await client.GetAsync("api/Venues/Details/" + venueCode);
+            var a = await getVenueName.Content.ReadAsAsync<VenuesDto>();
+            @event.Venue = a.Name;
 
             HttpResponseMessage getAvailability = await client.GetAsync("api/Availability?eventType=" + @event.TypeId
                 + "&beginDate=" + @event.Date.ToString("yyyy/MM/dd")
@@ -398,7 +407,7 @@ namespace ThAmCo.Events.Controllers
             {
                 
                 HttpResponseMessage getReservation = await client.GetAsync("api/reservations/" + reference);
-                var x = await getReservation.Content.ReadAsAsync<ReservationViewModel>();
+                var x = await getReservation.Content.ReadAsAsync<Reservation>();
                 return View("Reservation", x);
             }
             else
@@ -420,7 +429,7 @@ namespace ThAmCo.Events.Controllers
                 return BadRequest();
             }
 
-            var availableVenues = new List<FoodMenuViewModel>().AsEnumerable();
+            var availableVenues = new List<FoodMenu>().AsEnumerable();
 
             HttpClient client = getClient("32824");
 
@@ -428,7 +437,7 @@ namespace ThAmCo.Events.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                availableVenues = await response.Content.ReadAsAsync<IEnumerable<FoodMenuViewModel>>();
+                availableVenues = await response.Content.ReadAsAsync<IEnumerable<FoodMenu>>();
 
                 if (availableVenues.Count() == 0)
                 {
@@ -462,7 +471,7 @@ namespace ThAmCo.Events.Controllers
             HttpClient client = getClient("32824");
 
             HttpResponseMessage response = await client.GetAsync("api/FoodMenus/" + menuid);
-            FoodMenuViewModel menu = await response.Content.ReadAsAsync<FoodMenuViewModel>();
+            FoodMenu menu = await response.Content.ReadAsAsync<FoodMenu>();
 
             @event.Menu = menu.Starter + " | " + menu.Main + " | " + menu.Dessert;
             @event.FoodCost = menu.Cost;
@@ -481,7 +490,7 @@ namespace ThAmCo.Events.Controllers
             if (post.IsSuccessStatusCode)
             {
                 HttpResponseMessage getBooking = await client.GetAsync("api/foodmenus/" + menuid);
-                var x = await getBooking.Content.ReadAsAsync<FoodMenuViewModel>();
+                var x = await getBooking.Content.ReadAsAsync<FoodMenu>();
                 return View("BookMenu", x);
             }
             else
