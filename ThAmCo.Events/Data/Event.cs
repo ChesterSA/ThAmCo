@@ -41,7 +41,8 @@ namespace ThAmCo.Events.Data
         /// <summary>
         /// The TypeId of the event
         /// </summary>
-        [Required, MaxLength(3), MinLength(3)]
+        /// //, MaxLength(3), MinLength(3)
+        [Required]
         public string TypeId { get; set; }
 
         /// <summary>

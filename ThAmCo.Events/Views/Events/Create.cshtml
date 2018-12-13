@@ -29,8 +29,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="TypeId" class="control-label"></label>
-                <input asp-for="TypeId" class="form-control" />
-                <span asp-validation-for="TypeId" class="text-danger"></span>
+                <select asp-for="TypeId" class="form-control" />
+                @*<span asp-validation-for="TypeId" class="text-danger"></span>*@
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
@@ -47,4 +47,24 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: "http://localhost:23652/api/eventtypes",
+                method: "GET",
+                crossDomain: true,
+                success: function (result) {
+                    var options = '';
+                    for (var i = 0; i < result.length; i++) {
+                        options += '<option value ="' + result[i].id + '">' + result[i].title + '</option>';
+                    }
+                    $('#TypeId').html(options);
+                },
+                error: function () {
+                    alert("Event Types could not be found")
+                }
+            });
+        });
+    </script>
 }
