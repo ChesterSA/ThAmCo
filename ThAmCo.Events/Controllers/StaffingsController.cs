@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThAmCo.Events.Data;
+using ThAmCo.Events.Models;
 
 namespace ThAmCo.Events.Controllers
 {
@@ -41,15 +42,17 @@ namespace ThAmCo.Events.Controllers
                 return BadRequest();
             }
 
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", eventId);
-
             var staff = _context.Staff.ToList();
             var currentStaff = _context.Workers
                                        .Where(g => g.EventId == eventId)
                                        .ToList();
             staff.RemoveAll(s => currentStaff.Any(g => g.StaffId == s.Id));
 
-            ViewData["StaffId"] = new SelectList(staff, "Id", "StaffCode");
+            var staffList = staff.Select(s => new StaffList
+                            {
+                                Id = s.Id,
+                                FullName = s.FirstName + " " + s.Surname,
+                            });
 
             var @event = _context.Events.Find(eventId);
             if (@event == null)
@@ -57,7 +60,9 @@ namespace ThAmCo.Events.Controllers
                 return BadRequest();
             }
 
+            ViewData["EventId"] = eventId;
             ViewData["EventTitle"] = @event.Title;
+            ViewData["StaffId"] = new SelectList(staffList, "Id", "FullName");
 
             return View();
         }
@@ -83,11 +88,9 @@ namespace ThAmCo.Events.Controllers
                 {
                     _context.Add(staffing);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Index", "Events");
+                    return RedirectToAction("Details", "Events", new { id = staffing.EventId });
                 }
             }
-            ViewData["StaffId"] = new SelectList(_context.Staff, "Id", "StaffCode", staffing.StaffId);
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", staffing.EventId);
 
             var @event = await _context.Events.FindAsync(staffing.EventId);
             if (@event == null)
@@ -116,11 +119,17 @@ namespace ThAmCo.Events.Controllers
             ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", eventId);
 
             var currentWorkers = _context.Workers
-                                         .Where(g => g.EventId == eventId)
-                                         .Include(gb => gb.Staff)
-                                         .ToList();
+                                        .Where(g => g.EventId == eventId)
+                                        .Include(gb => gb.Staff)
+                                        .ToList();
 
-            ViewData["StaffId"] = new SelectList(currentWorkers, "StaffId", "Staff.StaffCode");
+            var staff = currentWorkers.Select(s => new StaffList
+            {
+                Id = s.Staff.Id,
+                FullName = s.Staff.FirstName + " " + s.Staff.Surname,
+            });
+
+            ViewData["StaffId"] = new SelectList(staff, "Id", "FullName");
 
             var @event = _context.Events.Find(eventId);
             if (@event == null)
@@ -148,7 +157,7 @@ namespace ThAmCo.Events.Controllers
 
             _context.Workers.Remove(worker);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Events");
+            return RedirectToAction("Details", "Events", new { id = staffing.EventId });
         }
 
         /// <summary>

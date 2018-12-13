@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThAmCo.Events.Data;
+using ThAmCo.Events.Models.ViewModels;
 
 namespace ThAmCo.Events.Controllers
 {
@@ -41,15 +43,17 @@ namespace ThAmCo.Events.Controllers
                 return BadRequest();
             }
 
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", eventId);
-
             var customers = _context.Customers.ToList();
             var currentGuests = _context.Guests
                                         .Where(g => g.EventId == eventId)
                                         .ToList();
-            customers.RemoveAll(c => currentGuests.Any(g => g.CustomerId == c.Id));
+            customers.RemoveAll(s => currentGuests.Any(g => g.CustomerId == s.Id));
 
-            ViewData["CustomerId"] = new SelectList(customers, "Id", "Email");
+            var guestList = customers.Select(s => new GuestList
+            {
+                Id = s.Id,
+                FullName = s.FirstName + " " + s.Surname,
+            });
 
             var @event = _context.Events.Find(eventId);
             if (@event == null)
@@ -57,8 +61,9 @@ namespace ThAmCo.Events.Controllers
                 return BadRequest();
             }
 
+            ViewData["EventId"] = eventId;
             ViewData["EventTitle"] = @event.Title;
-            ViewData["EventId"] = @event.Id;
+            ViewData["CustomerId"] = new SelectList(guestList, "Id", "FullName");
 
             return View();
         }
@@ -86,11 +91,9 @@ namespace ThAmCo.Events.Controllers
                 {
                     _context.Add(guestBooking);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Index", "Events");
+                    return RedirectToAction("Details", "Events", new { id = guestBooking.EventId });
                 }
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", guestBooking.CustomerId);
-            ViewData["EventId"] = new SelectList(_context.Events, "Id", "Title", guestBooking.EventId);
 
             var @event = await _context.Events.FindAsync(guestBooking.EventId);
             if (@event == null)
@@ -101,8 +104,7 @@ namespace ThAmCo.Events.Controllers
             guestBooking.Customer.Bookings.Add(guestBooking);
             guestBooking.Event.Bookings.Add(guestBooking);
 
-            ViewData["EventTitle"] = @event.Title;
-
+            ViewData["EventId"] = guestBooking.EventId;
             return View(guestBooking);
         }
 
@@ -153,7 +155,7 @@ namespace ThAmCo.Events.Controllers
                         throw;
                     }
                }
-                return RedirectToAction("Index", "Events");
+               return RedirectToAction("Details", "Events", new { id = eventid });
             }
             return View(GuestBooking);
         }
@@ -178,7 +180,13 @@ namespace ThAmCo.Events.Controllers
                                         .Include(gb => gb.Customer)
                                         .ToList();
 
-            ViewData["CustomerId"] = new SelectList(currentGuests, "CustomerId", "Customer.Email");
+            var guestList = currentGuests.Select(s => new GuestList
+            {
+                Id = s.Customer.Id,
+                FullName = s.Customer.FirstName + " " + s.Customer.Surname,
+            });
+
+            ViewData["CustomerId"] = new SelectList(guestList, "Id", "FullName");
 
             var @event = _context.Events.Find(eventId);
             if (@event == null)
@@ -207,7 +215,7 @@ namespace ThAmCo.Events.Controllers
 
             _context.Guests.Remove(booking);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Events");
+            return RedirectToAction("Details", "Events", new { id = guestBooking.EventId });
         }
 
         /// <summary>
