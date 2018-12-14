@@ -74,10 +74,10 @@ namespace ThAmCo.Events.Controllers
                 Debug.WriteLine("Recieved a bad response from service");
             }
 
-            //var eventTypesResponse = await client.GetAsync("api/EventTypes");
-            //var eventTypes = await eventTypesResponse.Content.ReadAsAsync<IEnumerable<EventType>>();
+            var eventTypesResponse = await client.GetAsync("api/EventTypes");
+            var eventTypes = await eventTypesResponse.Content.ReadAsAsync<IEnumerable<EventType>>();
 
-            //ViewData["EventTypes"] = new SelectList(eventTypes, "Id", "Title");
+            ViewData["EventTypes"] = new SelectList(eventTypes, "Id", "Title");
             ViewData["EventType"] = eventType;
 
             return View(availableVenues);

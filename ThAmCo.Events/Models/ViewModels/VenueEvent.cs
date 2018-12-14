@@ -19,6 +19,7 @@ namespace ThAmCo.Events.Models
         /// <summary>
         /// The title of the event
         /// </summary>
+        [Required]
         public string Title { get; set; }
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace ThAmCo.Events.Models
         /// <summary>
         /// How long the event will last
         /// </summary>
+        [Required]
         public TimeSpan? Duration { get; set; }
 
         /// <summary>
