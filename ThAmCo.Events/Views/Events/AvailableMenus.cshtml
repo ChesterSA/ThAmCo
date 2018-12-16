@@ -46,7 +46,7 @@
                 @Html.DisplayFor(modelItem => item.Dessert)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cost)
+                £@Html.DisplayFor(modelItem => item.Cost)
             </td>
             <td>
                 @Html.ActionLink("Book", "BookMenu", "Events", new { eventId = ViewData["EventId"], menuId = item.Id })

@@ -100,6 +100,9 @@ namespace ThAmCo.Events.Controllers
 
             ViewData["EventTitle"] = @event.Title;
 
+            staffing.Staff.Jobs.Add(staffing);
+            staffing.Event.Staff.Add(staffing);
+
             return View(staffing);
         }
 

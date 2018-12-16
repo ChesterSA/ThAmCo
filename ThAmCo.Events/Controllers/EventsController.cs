@@ -50,14 +50,17 @@ namespace ThAmCo.Events.Controllers
             foreach (Event e in events)
             {
                 EventList el = new EventList();
-                el.Bookings = e.Bookings;
+
                 el.Date = e.Date;
                 el.Duration = e.Duration;
                 el.Id = e.Id;
                 el.IsActive = e.IsActive;
                 el.Title = e.Title;
-                el.TypeId = e.TypeId;
+                el.GuestCount = _context.Guests
+                                 .Where(g => g.EventId == e.Id)
+                                 .Count();
 
+                el.Venue = (e.Venue == null) ? "No Venue Booked" : e.Venue ;
                 eventlists.Add(el);
             }
 
@@ -126,7 +129,7 @@ namespace ThAmCo.Events.Controllers
             decimal VenueCost = Convert.ToDecimal(@event.VenueCost.Substring(1));
 
             @event.TotalFoodCost = (FoodCost * @event.GuestCount).ToString("C2");
-            @event.TotalCost = ((FoodCost * @event.GuestCount) * VenueCost).ToString("C2");
+            @event.TotalCost = ((FoodCost * @event.GuestCount) + VenueCost).ToString("C2");
 
             if (@event == null)
             {
@@ -376,17 +379,16 @@ namespace ThAmCo.Events.Controllers
 
             var @event = await _context.Events.FindAsync(eventId);
 
-            HttpResponseMessage getVenueName = await client.GetAsync("api/Venues/Details/" + venueCode);
-            var a = await getVenueName.Content.ReadAsAsync<VenuesDto>();
-            @event.Venue = a.Name;
-
             HttpResponseMessage getAvailability = await client.GetAsync("api/Availability?eventType=" + @event.TypeId
                 + "&beginDate=" + @event.Date.ToString("yyyy/MM/dd")
                 + "&endDate=" + @event.Date.ToString("yyyy/MM/dd"));
 
             var availability = await getAvailability.Content.ReadAsAsync<IEnumerable<AvailableVenuesDto>>();
+
             decimal venueCost = (decimal)availability.FirstOrDefault().CostPerHour;
             @event.VenueCost = venueCost * @event.Duration.Value.Hours;
+
+            @event.Venue = availability.FirstOrDefault().Name;
 
             _context.Update(@event);
             await _context.SaveChangesAsync();
@@ -397,7 +399,6 @@ namespace ThAmCo.Events.Controllers
             reservation.EventDate = eventDate;
             reservation.StaffId = staffId;
             reservation.VenueCode = venueCode;
-
             
             string reference = venueCode + eventDate.ToString("yyyyMMdd");
             HttpResponseMessage delete = await client.DeleteAsync("api/reservations/" + reference);
@@ -429,7 +430,7 @@ namespace ThAmCo.Events.Controllers
                 return BadRequest();
             }
 
-            var availableVenues = new List<FoodMenu>().AsEnumerable();
+            var availableMenus = new List<FoodMenu>().AsEnumerable();
 
             HttpClient client = getClient("32824");
 
@@ -437,9 +438,9 @@ namespace ThAmCo.Events.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                availableVenues = await response.Content.ReadAsAsync<IEnumerable<FoodMenu>>();
+                availableMenus = await response.Content.ReadAsAsync<IEnumerable<FoodMenu>>();
 
-                if (availableVenues.Count() == 0)
+                if (availableMenus.Count() == 0)
                 {
                     Debug.WriteLine("No available venues");
                 }
@@ -451,7 +452,7 @@ namespace ThAmCo.Events.Controllers
 
             ViewData["EventId"] = eventid;
 
-            return View(availableVenues);
+            return View(availableMenus);
         }
 
         /// <summary>
@@ -484,13 +485,13 @@ namespace ThAmCo.Events.Controllers
             booking.MenuId = (int)menuid;
 
             HttpResponseMessage delete = await client.DeleteAsync("api/bookings/" + eventid);
-
             HttpResponseMessage post = await client.PostAsJsonAsync("api/bookings", booking);
 
             if (post.IsSuccessStatusCode)
             {
                 HttpResponseMessage getBooking = await client.GetAsync("api/foodmenus/" + menuid);
                 var x = await getBooking.Content.ReadAsAsync<FoodMenu>();
+                ViewData["EventId"] = eventid;
                 return View("BookMenu", x);
             }
             else

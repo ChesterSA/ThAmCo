@@ -22,7 +22,10 @@
                 @Html.DisplayNameFor(model => model.Duration)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TypeId)
+                @Html.DisplayNameFor(model => model.GuestCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Venue)
             </th>
             <th></th>
         </tr>
@@ -40,14 +43,17 @@
                 @Html.DisplayFor(modelItem => item.Duration)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TypeId)
+                @Html.DisplayFor(modelItem => item.GuestCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Venue)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="AvailableVenues" asp-route-eventid="@item.Id">Venues</a> |
                 <a asp-action="AvailableMenus" asp-route-eventid="@item.Id">Menus</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.Id">Cancel</a>
             </td>
         </tr>
 }

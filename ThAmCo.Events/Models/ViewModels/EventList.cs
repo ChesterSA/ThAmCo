@@ -39,20 +39,24 @@ namespace ThAmCo.Events.Models
         /// </summary>
         public TimeSpan? Duration { get; set; }
 
-        /// <summary>
-        /// An identifier describing the event type
-        /// </summary>
-        [Required, MaxLength(3), MinLength(3)]
-        public string TypeId { get; set; }
+        public int GuestCount { get; set; }
 
-        /// <summary>
-        /// The bookings linked to this event
-        /// </summary>
-        public List<GuestBooking> Bookings { get; set; }
+        public string Venue { get; set; }
 
-        /// <summary>
-        /// The staffings linked to this event
-        /// </summary>
-        public List<Staffing> Staff { get; set; }
+        ///// <summary>
+        ///// An identifier describing the event type
+        ///// </summary>
+        //[Required, MaxLength(3), MinLength(3)]
+        //public string TypeId { get; set; }
+
+        ///// <summary>
+        ///// The bookings linked to this event
+        ///// </summary>
+        //public List<GuestBooking> Bookings { get; set; }
+
+        ///// <summary>
+        ///// The staffings linked to this event
+        ///// </summary>
+        //public List<Staffing> Staff { get; set; }
     }
 }
